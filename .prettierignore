@@ -1,0 +1,50 @@
+# Dependency directories
+node_modules
+api/node_modules
+web/node_modules
+
+# Build output
+build
+api/build
+web/build
+
+# Coverage output
+coverage
+api/coverage
+web/coverage
+
+# Next.js output
+.next
+out
+web/.next
+web/out
+
+# Logs
+logs
+*.log
+api/logs
+api/*.log
+web/logs
+web/*.log
+
+# Environment files
+.env
+.env.*
+api/.env
+web/.env
+
+# Vercel
+.vercel
+
+# TypeScript build info
+*.tsbuildinfo
+
+# IDE folders
+.vscode
+.idea
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*.bak
