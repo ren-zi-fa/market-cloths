@@ -1,8 +1,12 @@
 import SearchInput from '@/components/Home/SearchInput'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
+import { Metadata } from 'next'
 import Image from 'next/image'
-
+export const metadata: Metadata = {
+   title: 'Home',
+   description: 'Home page'
+}
 export default function Home() {
    return (
       <div className="flex flex-col gap-6 mt-10 px-4">
