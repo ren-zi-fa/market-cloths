@@ -22,7 +22,7 @@ import Image from 'next/image'
 
 export default function Navbar() {
    return (
-      <header className="sticky top-0 z-50 w-full px-2 md:px-8">
+      <header className="sticky top-0 z-50 w-full px-2 md:px-8 bg-white/30 backdrop-blur">
          <div className="container flex h-16 items-center gap-4 mx-auto justify-between">
             {/* Kiri: SheetTrigger dan Nav Links */}
             <div className="flex items-center gap-3">

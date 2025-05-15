@@ -121,7 +121,6 @@
       @apply min-h-screen;
       font-family: 'Agdasima', Arial, Helvetica, 'sans-serif', system-ui;
       letter-spacing: 2px;
-      line-height: 2;
       font-size: large;
       background-image: repeating-linear-gradient(
          to left,
