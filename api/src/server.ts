@@ -1,14 +1,8 @@
-import express from 'express'
-import vars from './config/vars'
+import { app } from './config/express'
+import config from './config/vars'
 
-const app = express()
-const PORT = vars.port
-app.get('/', (req, res) => {
-   res.json({
-      message: 'hello'
-   })
+app.listen(config.port, () => {
+   console.log(`APP is running on http://localhost:${config.port}  `)
 })
 
-app.listen(PORT, () =>
-   console.log('app is running on http://localhost:' + PORT)
-)
+export default app

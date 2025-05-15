@@ -23,7 +23,7 @@ export default function Home() {
             </div>
             {/* Images Section */}
             <div className="flex flex-col md:flex-row order-1 md:order-2 gap-4 justify-center items-center">
-               <div className="w-[300px] md:w-1/2 flex justify-center">
+               <div className="w-[300px] md:w-full flex justify-center">
                   <Image
                      src="/images/sect1.png"
                      alt="gambar1"
@@ -33,7 +33,7 @@ export default function Home() {
                      priority
                   />
                </div>
-               <div className="w-[300px] md:w-1/2 flex justify-center">
+               <div className="w-[300px] md:w-full flex justify-center">
                   <Image
                      src="/images/sect2.png"
                      alt="gambar2"

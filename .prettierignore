@@ -28,10 +28,7 @@ web/logs
 web/*.log
 
 # Environment files
-.env
-.env.*
-api/.env
-web/.env
+
 
 # Vercel
 .vercel
