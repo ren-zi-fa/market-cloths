@@ -42,11 +42,6 @@ const productSchema = checkSchema({
       isArray: {
          errorMessage: 'Gambar produk wajib diisi dan berupa array'
       }
-   },
-   'image_url.*': {
-      isURL: {
-         errorMessage: 'URL gambar tidak valid'
-      }
    }
 })
 

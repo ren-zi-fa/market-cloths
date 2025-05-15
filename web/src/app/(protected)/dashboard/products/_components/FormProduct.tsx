@@ -1,7 +1,7 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
-import {zodResolver} from "@hookform/resolvers/zod"
+import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { productSchema } from '@/schema'
 import { Button } from '@/components/ui/button'
@@ -15,6 +15,7 @@ import {
    FormMessage,
    FormControl
 } from '@/components/ui/form'
+import { toast } from 'sonner'
 
 type ProductFormValues = z.infer<typeof productSchema>
 
@@ -30,9 +31,24 @@ export default function FormProduct() {
       }
    })
 
-   const onSubmit = (values: ProductFormValues) => {
-      // Handle submit (API call, etc)
-      console.log(values)
+   const onSubmit = async (values: ProductFormValues) => {
+      const res = await fetch('http://localhost:3100/api/products', {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(values)
+      })
+
+      if (res.ok) {
+         form.reset()
+         toast.success('Produk berhasil disimpan!')
+      } else {
+         const error = await res.json()
+         toast.error(
+            'Gagal menyimpan produk: ' + (error.message || 'Unknown error')
+         )
+      }
    }
 
    return (
