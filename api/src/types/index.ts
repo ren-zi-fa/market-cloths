@@ -1,5 +1,4 @@
-
-type Role = 'author' | 'buyer'
+type Role = 'admin' | 'user'
 
 interface UserModel {
    avt_image: string
@@ -18,15 +17,5 @@ interface Access_Token {
    iat: number
    exp: number
 }
-interface Refresh_Token {
-   userId: string
-   tokenType: string
-   iat: number
-   exp: number
-}
-export type {
-   Refresh_Token,
-   UserModel,
-   Role,
-   Access_Token
-}
+
+export type { UserModel, Role, Access_Token }

@@ -8,6 +8,15 @@ const ensureEmailOrUsername = (
    res: Response,
    next: NextFunction
 ) => {
+   // Tambahkan pengecekan body
+   if (!req.body) {
+      res.status(400).json({
+         success: false,
+         message: 'Request body tidak boleh kosong.'
+      })
+      return
+   }
+
    const { login_name } = req.body
 
    if (!login_name) {

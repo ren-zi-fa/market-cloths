@@ -1,8 +1,20 @@
 import { Router } from 'express'
 import { ensureEmailOrUsername } from '../middlewares/authMiddleware'
-import { loginValidation } from '../validation/auth.validation'
+import {
+   loginValidation,
+   registerValidation
+} from '../validation/auth.validation'
+import { authController } from '../controller'
 
 const router = Router()
-router.post("/auth/login",ensureEmailOrUsername,loginValidation,)
+router.post(
+   '/login',
+   ensureEmailOrUsername,
+   loginValidation,
+   authController.login
+)
+
+// Register route
+router.post('/register', registerValidation, authController.register)
 
 export default router

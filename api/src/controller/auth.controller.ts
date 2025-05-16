@@ -1,16 +1,18 @@
-import { NextFunction, Request, Response } from 'express'
-import { db } from '../config/firebase'
+import { Request, Response } from 'express'
+
 import { matchedData, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import vars from '../config/vars'
-import { FieldValue } from 'firebase-admin/firestore'
-import { Refresh_Token, Role, UserModel } from '../types'
-
-const JWT_SECRET = vars.JWT_SECRET as string
+import {} from 'firebase-admin/firestore'
+import { Role } from '../types'
+import { createUser, saveRefreshToken } from '../services/userService'
+import { findUserByLoginName } from '../services/userService'
+import { isUserExist } from '../services/userService'
+import crypto from 'node:crypto'
 const register = async (req: Request, res: Response) => {
    try {
-      const role: Role = 'buyer'
+      const role: Role = 'user'
       const result = validationResult(req)
       if (!result.isEmpty()) {
          res.status(400).json({
@@ -22,13 +24,19 @@ const register = async (req: Request, res: Response) => {
 
       const data = matchedData(req)
       const { password, username, email } = data
+
+      // CEK USER SUDAH ADA
+      const exist = await isUserExist(email, username)
+      if (exist) {
+         res.status(400).json({
+            success: false,
+            message: 'User dengan email atau username tersebut sudah terdaftar'
+         })
+         return
+      }
+
       const hashedPassword = await bcrypt.hash(password, 10)
-      await db.collection('users').add({
-         email,
-         username,
-         role: role,
-         password: hashedPassword
-      })
+      await createUser({ email, username, password: hashedPassword, role })
 
       res.status(201).json({
          success: true,
@@ -56,34 +64,15 @@ const login = async (req: Request, res: Response) => {
 
       const data = matchedData(req)
       const { login_name, password } = data
-
-      const isEmail = /@(gmail|yahoo|outlook|icloud)\.com$/.test(login_name)
-
-      let userQuery
-
-      if (isEmail) {
-         userQuery = db
-            .collection('users')
-            .where('email', '==', login_name)
-            .limit(1)
-      } else {
-         userQuery = db
-            .collection('users')
-            .where('username', '==', login_name)
-            .limit(1)
-      }
-
-      const userSnapshot = await userQuery.get()
-      if (userSnapshot.empty) {
+      const found = await findUserByLoginName(login_name)
+      if (!found) {
          res.status(400).json({
             message: 'Username atau email tidak ditemukan'
          })
          return
       }
 
-      const userDoc = userSnapshot.docs[0]
-      const userId = userDoc.id
-      const user = userDoc.data()
+      const { userId, user } = found
 
       const isPasswordValid = await bcrypt.compare(password, user.password)
       if (!isPasswordValid) {
@@ -105,16 +94,8 @@ const login = async (req: Request, res: Response) => {
          { expiresIn: '15m' }
       )
 
-      const refresh_token = jwt.sign(
-         { userId, tokenType: 'refresh' },
-         JWT_SECRET,
-         { expiresIn: '30d' }
-      )
-
-      await db.collection('users').doc(userId).update({
-         refreshToken: refresh_token
-      })
-
+      const refresh_token = crypto.randomBytes(32).toString('hex')
+      await saveRefreshToken(refresh_token, userId)
       res.cookie('refresh_token', refresh_token, {
          httpOnly: true,
          secure: true,
@@ -133,122 +114,4 @@ const login = async (req: Request, res: Response) => {
    }
 }
 
-const logout = async (req: Request, res: Response) => {
-   try {
-      const refreshToken = req.cookies.refresh_token
-      if (!refreshToken) {
-         res.status(400).json({ message: 'Refresh token tidak ditemukan' })
-         return
-      }
-
-      const queryLogout = db
-         .collection('users')
-         .where('refreshToken', '==', refreshToken)
-         .limit(1)
-
-      const userSnapshot = await queryLogout.get()
-
-      if (userSnapshot.empty) {
-         res.status(400).json({
-            message: 'Refresh token tidak valid atau sudah tidak aktif'
-         })
-         return
-      }
-
-      const doc = userSnapshot.docs[0]
-
-      await doc.ref.update({
-         refreshToken: FieldValue.delete() // hapus dari DB
-      })
-
-      res.clearCookie('refresh_token', {
-         httpOnly: true,
-         sameSite: 'strict',
-         secure: true
-      })
-
-      res.status(200).json({ message: 'Logout berhasil' })
-   } catch (error) {
-      console.error('Error saat logout:', error)
-      res.status(500).json({
-         message: 'Terjadi kesalahan saat proses logout. Coba lagi nanti.'
-      })
-   }
-}
-
-const refreshToken = async (
-   req: Request,
-   res: Response,
-   next: NextFunction
-) => {
-   const { refresh_token } = req.cookies
-
-   if (!refresh_token) {
-      res.status(401).json({
-         success: false,
-         message: 'Refresh token tidak ada'
-      })
-      return
-   }
-
-   let decoded: Refresh_Token
-   try {
-      decoded = jwt.verify(refresh_token, JWT_SECRET) as Refresh_Token
-   } catch (err) {
-      res.status(403).json({
-         success: false,
-         message: 'Invalid or expired refresh token'
-      })
-      return
-   }
-
-   const { userId } = decoded
-
-   try {
-      const userDoc = await db.collection('users').doc(userId).get()
-
-      if (!userDoc.exists) {
-         res.status(404).json({
-            success: false,
-            error: 'User not found',
-            message: `No user found for ID ${userId}`
-         })
-         return
-      }
-
-      const data = userDoc.data() as UserModel
-      if (!data.email || !data.username || !data.role) {
-         res.status(500).json({
-            success: false,
-            message: 'User data incomplete or corrupted'
-         })
-         return
-      }
-
-      const { email, username, role } = data
-
-      const newAccessToken = jwt.sign(
-         {
-            userId,
-            username,
-            email,
-            tokenType: 'access',
-            role
-         },
-         JWT_SECRET,
-         { expiresIn: '15m' }
-      )
-
-      res.status(200).json({ success: true, access_token: newAccessToken })
-      return
-   } catch (error) {
-      console.error('Error refreshing token:', error)
-      res.status(500).json({
-         success: false,
-         message: 'Internal server error'
-      })
-      return
-   }
-}
-
-export { register, login, logout, refreshToken }
+export { register, login }

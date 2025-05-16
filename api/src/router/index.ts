@@ -7,6 +7,6 @@ const router = Router()
 
 router.use(productRouter)
 router.use(userRouter)
-router.use(authRouter)
+router.use('/auth', authRouter)
 
 export { router }

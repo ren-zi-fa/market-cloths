@@ -30,7 +30,7 @@ export function makeEmailField({
       field.custom = {
          options: async (value) => {
             const userRef = await db
-               .collection('users')
+               .collection('user')
                .where('email', '==', value)
                .get()
 
