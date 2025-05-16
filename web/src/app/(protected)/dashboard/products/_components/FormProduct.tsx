@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -16,10 +17,12 @@ import {
    FormControl
 } from '@/components/ui/form'
 import { toast } from 'sonner'
+import instance from '@/lib/axios'
 
 type ProductFormValues = z.infer<typeof productSchema>
 
 export default function FormProduct() {
+   const [loading, setLoading] = useState(false)
    const form = useForm<ProductFormValues>({
       resolver: zodResolver(productSchema),
       defaultValues: {
@@ -32,22 +35,27 @@ export default function FormProduct() {
    })
 
    const onSubmit = async (values: ProductFormValues) => {
-      const res = await fetch('http://localhost:3100/api/products', {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json'
-         },
-         body: JSON.stringify(values)
-      })
-
-      if (res.ok) {
-         form.reset()
-         toast.success('Produk berhasil disimpan!')
-      } else {
-         const error = await res.json()
+      setLoading(true)
+      try {
+         const res = await instance.post('/products', values)
+         if (res.status === 201 || res.status === 200) {
+            form.reset()
+            toast.success('Produk berhasil disimpan!')
+         } else {
+            toast.error(
+               'Gagal menyimpan produk: ' +
+                  (res.data?.message || 'Unknown error')
+            )
+         }
+      } catch (error: any) {
          toast.error(
-            'Gagal menyimpan produk: ' + (error.message || 'Unknown error')
+            'Gagal menyimpan produk: ' +
+               (error.response?.data?.message ||
+                  error.message ||
+                  'Unknown error')
          )
+      } finally {
+         setLoading(false)
       }
    }
 
@@ -187,8 +195,8 @@ export default function FormProduct() {
                )}
             />
 
-            <Button type="submit" className="w-full">
-               Simpan Produk
+            <Button type="submit" className="w-full" disabled={loading}>
+               {loading ? 'Menyimpan...' : 'Simpan Produk'}
             </Button>
          </form>
       </Form>

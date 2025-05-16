@@ -1,11 +1,4 @@
-import {
-   AlignLeft,
-   Heart,
-   Menu,
-   ShoppingBag,
-   Slack,
-   UserRound
-} from 'lucide-react'
+import { AlignLeft, Heart, ShoppingBag, UserRound } from 'lucide-react'
 import { Nav_Links } from '@/constants/navbar'
 import {
    Sheet,
@@ -19,6 +12,14 @@ import {
 import Link from 'next/link'
 import Logom from '@/assets/logo.png'
 import Image from 'next/image'
+import {
+   DropdownMenu,
+   DropdownMenuContent,
+   DropdownMenuItem,
+   DropdownMenuLabel,
+   DropdownMenuSeparator,
+   DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 
 export default function Navbar() {
    return (
@@ -69,10 +70,24 @@ export default function Navbar() {
                <Image src={Logom} alt="logo" priority />
             </Link>
             {/* Kanan: Icon (desktop) */}
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden md:flex items-center space-x-8">
                <Heart />
                <ShoppingBag />
-               <UserRound />
+               <div className="">
+                  <DropdownMenu>
+                     <DropdownMenuTrigger>
+                        <UserRound />
+                     </DropdownMenuTrigger>
+                     <DropdownMenuContent>
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Profile</DropdownMenuItem>
+                        <DropdownMenuItem>Billing</DropdownMenuItem>
+                        <DropdownMenuItem>Team</DropdownMenuItem>
+                        <DropdownMenuItem>Subscription</DropdownMenuItem>
+                     </DropdownMenuContent>
+                  </DropdownMenu>
+               </div>
             </div>
             {/* Logo kanan hanya di mobile */}
             <Link href="/" className="flex md:hidden ml-auto">
