@@ -6,8 +6,14 @@ import jwt from 'jsonwebtoken'
 import vars from '../config/vars'
 import {} from 'firebase-admin/firestore'
 import { Role } from '../types'
-import { createUser, saveRefreshToken } from '../services/userService'
-import { findUserByLoginName } from '../services/userService'
+import {
+   createUser,
+   saveRefreshToken,
+   revokeRefreshToken,
+   findValidRefreshToken,
+   findUserByLoginName,
+   findUserById
+} from '../services/userService'
 import { isUserExist } from '../services/userService'
 import crypto from 'node:crypto'
 const register = async (req: Request, res: Response) => {
@@ -114,4 +120,63 @@ const login = async (req: Request, res: Response) => {
    }
 }
 
-export { register, login }
+const logout = async (req: Request, res: Response) => {
+   try {
+      const refresh_token = req.cookies?.refresh_token
+      if (!refresh_token) {
+         res.status(400).json({ message: 'Refresh token tidak ditemukan' })
+         return
+      }
+      await revokeRefreshToken(refresh_token)
+      res.clearCookie('refresh_token').json({ message: 'Logout berhasil' })
+   } catch (error) {
+      res.status(500).json({
+         message: 'Gagal logout',
+         error: (error as Error).message
+      })
+   }
+}
+
+const refreshToken = async (req: Request, res: Response) => {
+   try {
+      const refresh_token = req.cookies?.refresh_token
+      if (!refresh_token) {
+         res.status(400).json({ message: 'Refresh token tidak ditemukan' })
+         return
+      }
+      const tokenData = await findValidRefreshToken(refresh_token)
+      if (!tokenData) {
+         res.status(401).json({
+            message: 'Refresh token tidak valid atau sudah kadaluarsa'
+         })
+         return
+      }
+      // Ambil user dari userId via service
+      const found = await findUserById(tokenData.userId)
+      if (!found) {
+         res.status(404).json({ message: 'User tidak ditemukan' })
+         return
+      }
+      const { userId, user } = found
+      const JWT_SECRET = vars.JWT_SECRET as string
+      const access_token = jwt.sign(
+         {
+            userId,
+            username: user?.username,
+            email: user?.email,
+            tokenType: 'access',
+            role: user?.role
+         },
+         JWT_SECRET,
+         { expiresIn: '15m' }
+      )
+      res.json({ access_token })
+   } catch (error) {
+      res.status(500).json({
+         message: 'Gagal refresh token',
+         error: (error as Error).message
+      })
+   }
+}
+
+export { register, login, logout, refreshToken }

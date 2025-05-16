@@ -57,7 +57,7 @@ export async function isUserExist(email: string, username: string) {
 }
 
 export async function saveRefreshToken(refresh_token: string, userId: string) {
-   const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) 
+   const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
    const createdAt = new Date()
 
    await db.collection('refresh_tokens').add({
@@ -67,4 +67,35 @@ export async function saveRefreshToken(refresh_token: string, userId: string) {
       revoke: false,
       createdAt
    })
+}
+
+export async function revokeRefreshToken(refresh_token: string) {
+   const tokenSnap = await db
+      .collection('refresh_tokens')
+      .where('token', '==', refresh_token)
+      .limit(1)
+      .get()
+   if (!tokenSnap.empty) {
+      const docId = tokenSnap.docs[0].id
+      await db.collection('refresh_tokens').doc(docId).update({ revoke: true })
+      return true
+   }
+   return false
+}
+
+export async function findValidRefreshToken(token: string) {
+   const snap = await db
+      .collection('refresh_tokens')
+      .where('token', '==', token)
+      .where('revoke', '==', false)
+      .limit(1)
+      .get()
+   if (snap.empty) return null
+   return snap.docs[0].data()
+}
+
+export async function findUserById(userId: string) {
+   const userSnap = await db.collection('user').doc(userId).get()
+   if (!userSnap.exists) return null
+   return { userId: userSnap.id, user: userSnap.data() }
 }

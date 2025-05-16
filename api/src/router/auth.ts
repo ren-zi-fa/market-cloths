@@ -16,5 +16,7 @@ router.post(
 
 // Register route
 router.post('/register', registerValidation, authController.register)
+router.post('/logout', authController.logout)
+router.post('/refresh-token',authController.refreshToken)
 
 export default router
