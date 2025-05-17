@@ -97,6 +97,37 @@ export async function findValidRefreshToken(token: string) {
    return snap.docs[0].data()
 }
 
+export async function checkRefreshToken(userId: string): Promise<boolean> {
+   const snap = await db
+      .collection('refresh_tokens')
+      .where('userId', '==', userId)
+      .where('revoke', '==', false)
+      .limit(1)
+      .get()
+
+   return !snap.empty
+}
+export async function deleteRefreshToken(
+   userId: string,
+   revoke: boolean
+): Promise<void> {
+   if (revoke === false) {
+      const snap = await db
+         .collection('refresh_tokens')
+         .where('userId', '==', userId)
+         .where('revoke', '==', false)
+         .get()
+
+      const batch = db.batch()
+
+      snap.docs.forEach((doc) => {
+         batch.delete(doc.ref)
+      })
+
+      await batch.commit()
+   }
+}
+
 export async function findUserById(userId: string) {
    const userSnap = await db.collection('user').doc(userId).get()
    if (!userSnap.exists) return null

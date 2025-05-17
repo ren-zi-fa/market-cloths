@@ -4,7 +4,6 @@ import { matchedData, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import vars from '../config/vars'
-import {} from 'firebase-admin/firestore'
 import { Role } from '../types'
 import {
    createUser,
@@ -12,7 +11,9 @@ import {
    revokeRefreshToken,
    findValidRefreshToken,
    findUserByLoginName,
-   findUserById
+   findUserById,
+   checkRefreshToken,
+   deleteRefreshToken
 } from '../services/userService'
 import { isUserExist } from '../services/userService'
 import crypto from 'node:crypto'
@@ -105,8 +106,17 @@ const login = async (req: Request, res: Response) => {
          JWT_SECRET,
          { expiresIn: '15m' }
       )
+      const existingValidToken = await checkRefreshToken(userId)
+
+      if (existingValidToken) {
+         await deleteRefreshToken(userId, false)
+         console.log('Refresh token yang direvoke telah dihapus.')
+      } else {
+         console.log('Tidak ada refresh token yang direvoke.')
+      }
 
       const refresh_token = crypto.randomBytes(32).toString('hex')
+
       await saveRefreshToken(refresh_token, userId)
       res.cookie('access_token', access_token, {
          httpOnly: true,
@@ -118,7 +128,7 @@ const login = async (req: Request, res: Response) => {
             httpOnly: true,
             secure: vars.node_env === 'production',
             sameSite: vars.node_env === 'production' ? 'strict' : 'lax',
-            maxAge:  2 * 60 * 1000 
+            maxAge: vars.REFRESH_TOKEN_MAX_AGE
          })
          .json({
             success: true,
@@ -141,7 +151,9 @@ const logout = async (req: Request, res: Response) => {
          return
       }
       await revokeRefreshToken(refresh_token)
-      res.clearCookie('refresh_token').json({ message: 'Logout berhasil' })
+      res.clearCookie('refresh_token')
+         .clearCookie('access_token')
+         .json({ message: 'Logout berhasil' })
    } catch (error) {
       res.status(500).json({
          message: 'Gagal logout',

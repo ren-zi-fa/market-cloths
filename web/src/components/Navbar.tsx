@@ -1,3 +1,4 @@
+'use client'
 import { AlignLeft, Heart, ShoppingBag, UserRound } from 'lucide-react'
 import { Nav_Links } from '@/constants/navbar'
 import {
@@ -20,8 +21,18 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { useProfile } from '@/hooks/use-profile'
+import instance from '@/lib/axios'
+import { useRouter } from 'next/navigation'
+
 
 export default function Navbar() {
+   const { user, loading } = useProfile()
+   const router = useRouter()
+   const onLogout = async () => {
+      await instance.post('/api/auth/logout')
+      router.replace('/auth/login')
+   }
    return (
       <header className="sticky top-0 z-50 w-full px-2 md:px-8 bg-white/30 backdrop-blur">
          <div className="container flex h-16 items-center gap-4 mx-auto justify-between">
@@ -79,12 +90,33 @@ export default function Navbar() {
                         <UserRound />
                      </DropdownMenuTrigger>
                      <DropdownMenuContent>
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuLabel>
+                           {loading
+                              ? 'Loading...'
+                              : user
+                                ? `Hi, ${user.username}`
+                                : 'My Account'}
+                        </DropdownMenuLabel>
+                        <DropdownMenuLabel>
+                           {loading ? (
+                              'Loading...'
+                           ) : user && user.role === 'admin' ? (
+                              <Link href="/dashboard">Dashboard</Link>
+                           ) : null}
+                        </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Profile</DropdownMenuItem>
-                        <DropdownMenuItem>Billing</DropdownMenuItem>
-                        <DropdownMenuItem>Team</DropdownMenuItem>
-                        <DropdownMenuItem>Subscription</DropdownMenuItem>
+                        {user ? (
+                           <>
+                              <DropdownMenuItem>Profile</DropdownMenuItem>
+                              <DropdownMenuItem onClick={onLogout}>
+                                 Logout
+                              </DropdownMenuItem>
+                           </>
+                        ) : (
+                           <DropdownMenuItem asChild>
+                              <Link href="/auth/login">Login</Link>
+                           </DropdownMenuItem>
+                        )}
                      </DropdownMenuContent>
                   </DropdownMenu>
                </div>
