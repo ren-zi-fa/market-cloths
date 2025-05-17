@@ -122,7 +122,7 @@ const login = async (req: Request, res: Response) => {
          httpOnly: true,
          secure: vars.node_env === 'production',
          sameSite: vars.node_env === 'production' ? 'strict' : 'lax',
-         maxAge: 2 * 60 * 1000 // 15 menit
+         maxAge:  vars.ACCESS_TOKEN_MAX_AGE
       })
          .cookie('refresh_token', refresh_token, {
             httpOnly: true,
@@ -199,7 +199,7 @@ const refreshToken = async (req: Request, res: Response) => {
          httpOnly: true,
          secure: vars.node_env === 'production',
          sameSite: vars.node_env === 'production' ? 'strict' : 'lax',
-         maxAge: 15 * 60 * 1000 // 15 menit
+         maxAge: vars.ACCESS_TOKEN_MAX_AGE
       }).json({ success: true, message: 'Token diperbarui' })
    } catch (error) {
       res.status(500).json({
