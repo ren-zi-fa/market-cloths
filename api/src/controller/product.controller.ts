@@ -1,36 +1,26 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { db } from '../config/firebase'
 import { matchedData, validationResult } from 'express-validator'
+import { fetchProducts } from '../services/productService'
 
-const getNewProduct = async (req: Request, res: Response) => {
+const getProduct = async (req: Request, res: Response, next: NextFunction) => {
    try {
-      // Pastikan hanya true yang diterima
-      const request = req.query.new as string
-      if (request === 'true') {
-         const productsRef = db.collection('product')
-         const snapshot = await productsRef
-            .orderBy('createdAt', 'desc')
-            .limit(10)
-            .get()
-         const products = snapshot.docs.map((doc) => {
-            const data = doc.data()
-            return {
-               id: doc.id,
-               ...data,
-               createdAt:
-                  data.createdAt && data.createdAt.toDate
-                     ? data.createdAt.toDate().toISOString()
-                     : data.createdAt
-            }
-         })
-         res.json({ data: products })
-         return
-      } else {
-         res.json({ data: [] })
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+         res.status(400).json({ errors: errors.array() })
          return
       }
+     
+      const data = matchedData(req, { locations: ['query'] })
+      const isNew = data.new as boolean
+
+      const products = await fetchProducts(isNew)
+      res.json({ data: products })
    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch products' })
+      res.status(500).json({
+         success: false,
+         error: 'Failed to fetch products'
+      })
    }
 }
 
@@ -65,4 +55,4 @@ const saveProduct = async (req: Request, res: Response) => {
    }
 }
 
-export { getNewProduct, saveProduct }
+export { getProduct, saveProduct }

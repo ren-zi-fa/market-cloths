@@ -17,6 +17,8 @@ import {
 } from '../services/userService'
 import { isUserExist } from '../services/userService'
 import crypto from 'node:crypto'
+
+
 const register = async (req: Request, res: Response) => {
    try {
       const role: Role = 'user'

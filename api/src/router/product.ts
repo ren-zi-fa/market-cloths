@@ -1,12 +1,17 @@
-import { Router } from 'express'
-import { getNewProduct, saveProduct } from '../controller/product.controller'
+import { Router, Request, Response } from 'express'
+
 import { query } from 'express-validator'
 import { productSchema } from '../validation/product.validation'
+import { productController } from '../controller'
 const router = Router()
 
 router
    .route('/products')
-   .post(productSchema, saveProduct)
-   .get(query('new').optional().isBoolean().toBoolean(), getNewProduct)
+   .post(productSchema, productController.saveProduct)
+   .get(
+      [query('new').optional().isBoolean().toBoolean()],
+      productController.getProduct
+   )
+
 
 export default router
