@@ -5,18 +5,21 @@ export async function createUser({
    email,
    username,
    password,
-   role
+   role,
+   makanan_favorite
 }: {
    email: string
    username: string
    password: string
    role: Role
+   makanan_favorite: string
 }) {
    return db.collection('user').add({
       email,
       username,
       role,
-      password
+      password,
+      makanan_favorite
    })
 }
 export async function findUserByLoginName(login_name: string) {
@@ -97,5 +100,9 @@ export async function findValidRefreshToken(token: string) {
 export async function findUserById(userId: string) {
    const userSnap = await db.collection('user').doc(userId).get()
    if (!userSnap.exists) return null
-   return { userId: userSnap.id, user: userSnap.data() }
+   const userData = userSnap.data()
+   if (!userData) return null
+   // Hilangkan password sebelum dikirim
+   const { password, ...userWithoutPassword } = userData
+   return { userId: userSnap.id, user: userWithoutPassword }
 }

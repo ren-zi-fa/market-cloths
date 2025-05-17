@@ -1,4 +1,3 @@
-
 import { ChartAreaInteractive } from '@/components/chart-area-interactive'
 import { DataTable } from '@/components/data-table'
 import { SectionCards } from '@/components/section-cards'
@@ -10,7 +9,10 @@ export const metadata: Metadata = {
    title: 'Dashboard',
    description: 'Dashboard page'
 }
-export default function Page() {
+
+
+export default async function Page() {
+
    return (
       <>
          <SiteHeader />

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoginSchema } from '@/schema'
@@ -16,12 +16,15 @@ import {
 } from '@/components/ui/form'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
+import instance from '@/lib/axios'
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
 
 type LoginInput = z.infer<typeof LoginSchema>
 
 export default function FormLogin() {
    const [showPassword, setShowPassword] = useState(false)
-
+   const router = useRouter()
    const form = useForm<LoginInput>({
       resolver: zodResolver(LoginSchema),
       defaultValues: {
@@ -29,16 +32,39 @@ export default function FormLogin() {
          password: ''
       }
    })
-
-   const onSubmit = (data: LoginInput) => {
-      // Lakukan proses login di sini
-      console.log(data)
+   const { setError } = form
+   const [loginError, setLoginError] = useState<string | null>('')
+   const onLogin = async (data: LoginInput) => {
+      try {
+         const res = await instance.post('/api/auth/login', data)
+         // Jika login sukses, redirect ke dashboard
+         router.replace('/')
+      } catch (err) {
+         if (axios.isAxiosError(err)) {
+            const messages = err.response?.data?.message
+            setLoginError(messages)
+            if (Array.isArray(messages)) {
+               messages.forEach((msg: any) => {
+                  if (msg.type === 'field' && msg.path && msg.msg) {
+                     setError(msg.path, { message: msg.msg })
+                  }
+               })
+            }
+         }
+         // Tidak ada redirect di sini, user tetap di halaman login
+      }
    }
+
+   useEffect(() => {
+      if (loginError) {
+         alert(loginError)
+      }
+   }, [loginError])
 
    return (
       <Form {...form}>
          <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onLogin)}
             className="space-y-4 max-w-sm mx-auto"
          >
             <FormField

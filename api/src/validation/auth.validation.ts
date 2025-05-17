@@ -25,7 +25,7 @@ const passwordField: FieldSchema = {
 }
 
 const passwordConfirmationField: FieldSchema = {
-   password_confirmation: {
+   konfirmasi_password: {
       in: ['body'],
       notEmpty: {
          errorMessage: 'Konfirmasi password wajib diisi'
@@ -40,6 +40,17 @@ const passwordConfirmationField: FieldSchema = {
       }
    }
 }
+const makananFavorite: FieldSchema = {
+   makanan_favorite: {
+      in: ['body'],
+      notEmpty: {
+         errorMessage: 'Konfirmasi password wajib diisi'
+      },
+      isString: {
+         errorMessage: 'harus berupa string'
+      }
+   }
+}
 
 const registerValidation = checkSchema({
    ...makeUsernameField(),
@@ -49,7 +60,8 @@ const registerValidation = checkSchema({
       optional: false
    }),
    ...passwordField,
-   ...passwordConfirmationField
+   ...passwordConfirmationField,
+   ...makananFavorite
 })
 const loginValidation = checkSchema({
    ...makeLoginNameField(),

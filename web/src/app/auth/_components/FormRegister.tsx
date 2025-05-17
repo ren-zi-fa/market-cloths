@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/form'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
+import instance from '@/lib/axios'
+import { toast } from 'sonner'
 
 type RegisterInput = z.infer<typeof RegisterSchema>
 
@@ -29,19 +31,34 @@ export default function FormRegister() {
          username: '',
          email: '',
          password: '',
-         konfirmasi_password: ''
+         konfirmasi_password: '',
+         makanan_favorite: ''
       }
    })
 
-   const onSubmit = (data: RegisterInput) => {
-      // Proses registrasi di sini
-      console.log(data)
+   const onRegister = async (data: RegisterInput) => {
+      try {
+         const result = await instance.post('/api/auth/register', data)
+         toast.success(result.data.message || 'Registrasi berhasil!')
+         // Optional: reset form jika ingin
+         // form.reset()
+      } catch (error: any) {
+         const msg =
+            error?.response?.data?.message ||
+            'Terjadi kesalahan saat registrasi'
+         // Jika message berupa array (dari express-validator)
+         if (Array.isArray(msg)) {
+            msg.forEach((m: any) => toast.error(m.msg || m.message || 'Error'))
+         } else {
+            toast.error(msg)
+         }
+      }
    }
 
    return (
       <Form {...form}>
          <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onRegister)}
             className="space-y-4 max-w-sm mx-auto"
          >
             <FormField
@@ -66,6 +83,17 @@ export default function FormRegister() {
                         placeholder="Masukkan email"
                         {...field}
                      />
+                     <FormMessage />
+                  </FormItem>
+               )}
+            />
+            <FormField
+               control={form.control}
+               name="makanan_favorite"
+               render={({ field }) => (
+                  <FormItem>
+                     <FormLabel>Makanan Favorite</FormLabel>
+                     <Input type="text" placeholder="Mie Ayam" {...field} />
                      <FormMessage />
                   </FormItem>
                )}

@@ -37,7 +37,7 @@ export default function FormProduct() {
    const onSubmit = async (values: ProductFormValues) => {
       setLoading(true)
       try {
-         const res = await instance.post('/products', values)
+         const res = await instance.post('/api/products', values)
          if (res.status === 201 || res.status === 200) {
             form.reset()
             toast.success('Produk berhasil disimpan!')

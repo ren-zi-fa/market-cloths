@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 
 import { matchedData, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import vars from '../config/vars'
 import {} from 'firebase-admin/firestore'
 import { Role } from '../types'
@@ -29,7 +29,7 @@ const register = async (req: Request, res: Response) => {
       }
 
       const data = matchedData(req)
-      const { password, username, email } = data
+      const { password, username, email, makanan_favorite } = data
 
       // CEK USER SUDAH ADA
       const exist = await isUserExist(email, username)
@@ -42,7 +42,13 @@ const register = async (req: Request, res: Response) => {
       }
 
       const hashedPassword = await bcrypt.hash(password, 10)
-      await createUser({ email, username, password: hashedPassword, role })
+      await createUser({
+         email,
+         username,
+         password: hashedPassword,
+         role,
+         makanan_favorite
+      })
 
       res.status(201).json({
          success: true,
@@ -102,15 +108,22 @@ const login = async (req: Request, res: Response) => {
 
       const refresh_token = crypto.randomBytes(32).toString('hex')
       await saveRefreshToken(refresh_token, userId)
-      res.cookie('refresh_token', refresh_token, {
+      res.cookie('access_token', access_token, {
          httpOnly: true,
-         secure: true,
-         sameSite: 'strict',
-         maxAge: 14 * 24 * 60 * 60 * 1000
-      }).json({
-         message: 'Login berhasil',
-         access_token
+         secure: vars.node_env === 'production',
+         sameSite: vars.node_env === 'production' ? 'strict' : 'lax',
+         maxAge: 2 * 60 * 1000 // 15 menit
       })
+         .cookie('refresh_token', refresh_token, {
+            httpOnly: true,
+            secure: vars.node_env === 'production',
+            sameSite: vars.node_env === 'production' ? 'strict' : 'lax',
+            maxAge:  2 * 60 * 1000 
+         })
+         .json({
+            success: true,
+            message: 'Login berhasil'
+         })
    } catch (error) {
       console.error(error)
       res.status(500).json({
@@ -170,7 +183,12 @@ const refreshToken = async (req: Request, res: Response) => {
          JWT_SECRET,
          { expiresIn: '15m' }
       )
-      res.json({ access_token })
+      res.cookie('access_token', access_token, {
+         httpOnly: true,
+         secure: vars.node_env === 'production',
+         sameSite: vars.node_env === 'production' ? 'strict' : 'lax',
+         maxAge: 15 * 60 * 1000 // 15 menit
+      }).json({ success: true, message: 'Token diperbarui' })
    } catch (error) {
       res.status(500).json({
          message: 'Gagal refresh token',
@@ -179,4 +197,41 @@ const refreshToken = async (req: Request, res: Response) => {
    }
 }
 
-export { register, login, logout, refreshToken }
+const profile = async (req: Request, res: Response) => {
+   try {
+      const token = req.cookies?.access_token
+      if (!token) {
+         res.status(401).json({ message: 'Unauthorized' })
+         return
+      }
+      const JWT_SECRET = vars.JWT_SECRET as string
+      let payload: JwtPayload | string
+      try {
+         payload = jwt.verify(token, JWT_SECRET)
+      } catch {
+         res.status(401).json({ message: 'Unauthorized' })
+         return
+      }
+      // Ambil userId dari payload
+      const userId = (payload as any).userId
+      if (!userId) {
+         res.status(401).json({ message: 'Unauthorized' })
+         return
+      }
+      const found = await findUserById(userId)
+      if (!found) {
+         res.status(404).json({ message: 'User tidak ditemukan' })
+         return
+      }
+      // Jangan kirim password ke client
+      const { ...data } = found.user
+      res.json({ user: { userId: found.userId, ...data } })
+   } catch (error) {
+      res.status(500).json({
+         message: 'Gagal mengambil profile',
+         error: (error as Error).message
+      })
+   }
+}
+
+export { register, login, logout, refreshToken, profile }
