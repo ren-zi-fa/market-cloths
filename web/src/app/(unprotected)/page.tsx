@@ -3,11 +3,16 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import { Metadata } from 'next'
 import Image from 'next/image'
+import Carousel from './_components/carousel'
+import instance from '@/lib/axios'
+import { Iproduct } from '@/types'
 export const metadata: Metadata = {
    title: 'Home',
    description: 'Home page'
 }
-export default function Home() {
+export default async function Home() {
+   const { data } = await instance.get('/api/products?new=false')
+   const newProduct: Iproduct[] = data.data
    return (
       <div className="flex flex-col gap-6 mt-10 px-4">
          <SearchInput />
@@ -48,6 +53,14 @@ export default function Home() {
                   />
                </div>
             </div>
+         </div>
+         <div className="h-full flex flex-col">
+            <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+               New <br />
+               This Week
+            </h1>
+
+            <Carousel data={newProduct} />
          </div>
       </div>
    )

@@ -7,9 +7,9 @@ export const fetchProducts = async (isNew?: boolean) => {
      let queryRef = productsRef
 
      if (isNew === true) {
-       queryRef = queryRef.limit(2)  // ambil 5 produk terbaru
+       queryRef = queryRef.limit(8)  // ambil 5 produk terbaru
      } else if (isNew === false) {
-       queryRef = queryRef.limit(5) // ambil 10 produk terbaru
+       queryRef = queryRef.limit(10) // ambil 10 produk terbaru
      }
      // jika isNew undefined ambil semua produk tanpa limit
 

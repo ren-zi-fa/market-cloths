@@ -95,7 +95,7 @@ export default function Navbar() {
                               ? 'Loading...'
                               : user
                                 ? `Hi, ${user.username}`
-                                : 'My Account'}
+                                : 'Guest'}
                         </DropdownMenuLabel>
                         <DropdownMenuLabel>
                            {loading ? (
