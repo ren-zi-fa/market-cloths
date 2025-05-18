@@ -36,15 +36,15 @@ export default function FormLogin() {
    const [loginError, setLoginError] = useState<string | null>('')
    const onLogin = async (data: LoginInput) => {
       try {
-         const res = await instance.post('/api/auth/login', data)
-         // Jika login sukses, redirect ke dashboard
+         await instance.post('/api/auth/login', data)
+
          router.replace('/')
       } catch (err) {
          if (axios.isAxiosError(err)) {
             const messages = err.response?.data?.message
             setLoginError(messages)
             if (Array.isArray(messages)) {
-               messages.forEach((msg: any) => {
+               messages.forEach((msg) => {
                   if (msg.type === 'field' && msg.path && msg.msg) {
                      setError(msg.path, { message: msg.msg })
                   }

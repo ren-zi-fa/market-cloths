@@ -1,4 +1,4 @@
-import { Inter, Lusitana, Agdasima } from 'next/font/google'
+import {  Agdasima } from 'next/font/google'
 
 export const agdasima = Agdasima({
    weight: '700',

@@ -11,7 +11,7 @@ type User = {
 export function useProfile() {
    const [user, setUser] = useState<User | null>(null)
    const [loading, setLoading] = useState(true)
-   const [error, setError] = useState<string | null>(null)
+
 
    useEffect(() => {
       instance
@@ -21,5 +21,5 @@ export function useProfile() {
          .finally(() => setLoading(false))
    }, [])
 
-   return { user, loading, error }
+   return { user, loading, }
 }

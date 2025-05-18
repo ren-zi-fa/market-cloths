@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form'
 import { toast } from 'sonner'
 import instance from '@/lib/axios'
+import axios from 'axios'
 
 type ProductFormValues = z.infer<typeof productSchema>
 
@@ -47,13 +48,14 @@ export default function FormProduct() {
                   (res.data?.message || 'Unknown error')
             )
          }
-      } catch (error: any) {
-         toast.error(
-            'Gagal menyimpan produk: ' +
-               (error.response?.data?.message ||
-                  error.message ||
-                  'Unknown error')
-         )
+      } catch (error) {
+         if (axios.isAxiosError(error)) {
+            const msg =
+               error.response?.data?.message || error.message || 'Unknown error'
+            toast.error('Gagal menyimpan produk: ' + msg)
+         } else {
+            toast.error('Gagal menyimpan produk: Unknown error')
+         }
       } finally {
          setLoading(false)
       }

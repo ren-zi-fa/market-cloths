@@ -18,9 +18,8 @@ interface CartContextType {
    addToCart: (item: CartItem) => void
    removeFromCart: (id: string) => void
    clearCart: () => void
-   setCart: React.Dispatch<React.SetStateAction<CartItem[]>> 
+   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
 }
-
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
@@ -35,7 +34,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
          try {
             setCart(JSON.parse(storedCart))
          } catch (e) {
-            console.error('Gagal parsing cart dari localStorage')
+            if (e) {
+               console.error('Gagal parsing cart dari localStorage')
+            }
          }
       }
    }, [])

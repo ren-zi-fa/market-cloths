@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { jwtDecode } from 'jwt-decode'
+import { User } from '@/types'
 
 export default async function DashboardLayout({
    children
@@ -19,11 +20,12 @@ export default async function DashboardLayout({
    }
 
    let role = null
+   type Payload = User
    try {
-      // @ts-ignore
-      const payload: any = jwtDecode(accessToken)
+      const payload: Payload = jwtDecode(accessToken)
       role = payload.role
    } catch (e) {
+      console.log(e)
       redirect('/auth/login')
    }
 
@@ -34,10 +36,7 @@ export default async function DashboardLayout({
    return (
       <SidebarProvider>
          <AppSidebar variant="inset" />
-         <SidebarInset>
-     
-            {children}
-         </SidebarInset>
+         <SidebarInset>{children}</SidebarInset>
       </SidebarProvider>
    )
 }

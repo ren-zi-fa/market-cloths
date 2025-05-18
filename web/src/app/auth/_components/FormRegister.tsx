@@ -18,6 +18,7 @@ import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 import instance from '@/lib/axios'
 import { toast } from 'sonner'
+import axios from 'axios'
 
 type RegisterInput = z.infer<typeof RegisterSchema>
 
@@ -42,15 +43,22 @@ export default function FormRegister() {
          toast.success(result.data.message || 'Registrasi berhasil!')
          // Optional: reset form jika ingin
          // form.reset()
-      } catch (error: any) {
-         const msg =
-            error?.response?.data?.message ||
-            'Terjadi kesalahan saat registrasi'
-         // Jika message berupa array (dari express-validator)
-         if (Array.isArray(msg)) {
-            msg.forEach((m: any) => toast.error(m.msg || m.message || 'Error'))
+      } catch (error) {
+         if (axios.isAxiosError(error)) {
+            const msg =
+               error.response?.data?.message ||
+               'Terjadi kesalahan saat registrasi'
+
+            if (Array.isArray(msg)) {
+               msg.forEach((m: { msg?: string; message?: string }) =>
+                  toast.error(m.msg || m.message || 'Error')
+               )
+            } else {
+               toast.error(msg)
+            }
          } else {
-            toast.error(msg)
+            // Fallback kalau error bukan dari Axios
+            toast.error('Unexpected error occurred.')
          }
       }
    }

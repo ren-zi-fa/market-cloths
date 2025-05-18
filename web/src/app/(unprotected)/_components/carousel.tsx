@@ -16,6 +16,7 @@ import { Plus } from 'lucide-react'
 import { useProfile } from '@/hooks/use-profile'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/hooks/use-cart'
+import { formatRupiah } from '@/lib/formatRupiah'
 
 type CarouselProps = Iproduct
 
@@ -57,12 +58,13 @@ export default function CarouselProduct({ data }: { data: CarouselProps[] }) {
                                  <p className="absolute inset-0 flex items-center justify-center text-white text-lg font-semibold bg-black/5 backdrop-blur-sm rounded-md text-center px-2">
                                     {item.name}
                                  </p>
+                                 <p className='text-center text-xs mt-2'>{item.description}</p>
                               </div>
                            </CardContent>
                            <CardFooter className="flex flex-col items-start justify-between px-4 py-2 gap-2 text-sm">
                               <div className="w-full flex justify-between text-muted-foreground">
                                  <span className="font-semibold">
-                                    {item.price} $
+                                    {formatRupiah(item.price)}
                                  </span>
                                  <span>Stok: {item.stok}</span>
                               </div>

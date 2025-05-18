@@ -6,14 +6,17 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Link, UserRound } from 'lucide-react'
+import { User } from '@/types'
+import { UserRound } from 'lucide-react'
+import Link from 'next/link'
 
+type UserProps = Omit<User,"tokenType">
 interface UserNavProps {
-   user: any
-   loading: any
-   onLogout:()=>void
+   user:UserProps
+   loading: boolean
+   onLogout: () => void
 }
-export default function UserNav({ user, loading,onLogout }: UserNavProps) {
+export default function UserNav({ user, loading, onLogout }: UserNavProps) {
    return (
       <div className="">
          <DropdownMenu>

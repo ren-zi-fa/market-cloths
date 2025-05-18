@@ -6,15 +6,16 @@ import {
    DrawerClose,
    DrawerContent,
    DrawerDescription,
-   DrawerFooter,
    DrawerHeader,
    DrawerTitle,
    DrawerTrigger
 } from '@/components/ui/drawer'
 import { useCart } from '@/hooks/use-cart'
 import { useProfile } from '@/hooks/use-profile'
+import { formatRupiah } from '@/lib/formatRupiah'
 import { Iproduct } from '@/types'
 import { ShoppingBag } from 'lucide-react'
+import Image from 'next/image'
 
 interface CheckoutCartProps {
    cartCount: number
@@ -95,7 +96,9 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
                               key={product.id}
                               className="flex items-center gap-4 border rounded-lg p-3"
                            >
-                              <img
+                              <Image
+                                 width={200}
+                                 height={200}
                                  src={
                                     product.image_url[0] || '/placeholder.jpg'
                                  }
@@ -107,7 +110,7 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
                                     {product.name}
                                  </h3>
                                  <p className="text-sm text-gray-600">
-                                    ${product.price.toFixed(2)}
+                                    {formatRupiah(product.price)}
                                  </p>
                                  <p className="text-xs text-gray-400">
                                     Stock: {product.stok} | Quantity: {qty}
@@ -143,14 +146,20 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
                         'loading...'
                      ) : (
                         <>
-                           <div className="">Nama:{user?.username}</div>
-                           <div className="">Email:{user?.email}</div>
+                           <div className="">
+                              <span>Nama: </span>
+                              <span>{user?.username}</span>
+                           </div>
+                           <div className="">
+                              <span>Email: </span>
+                              <span>{user?.email}</span>
+                           </div>
                         </>
                      )}
                      <div className="flex gap-2 items-center justify-between">
                         <div className="flex gap-4">
                            <span>Total:</span>
-                           <span>${totalPrice.toFixed(2)}</span>
+                           <span>{formatRupiah(totalPrice)}</span>
                         </div>
                         <div className="flex gap-2">
                            <Button disabled={groupedCarts.length === 0}>
