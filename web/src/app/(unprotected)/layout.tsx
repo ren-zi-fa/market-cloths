@@ -1,5 +1,7 @@
 import { agdasima } from '@/components/fonts'
+import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
+import { CartProvider } from '@/hooks/use-cart'
 
 export default function BaseLayout({
    children
@@ -8,8 +10,11 @@ export default function BaseLayout({
 }) {
    return (
       <main className={`${agdasima.className} tracking-widest  antialiased`}>
-         <Navbar />
-         {children}
+         <CartProvider>
+            <Navbar />
+            {children}
+         </CartProvider>
+         <Footer />
       </main>
    )
 }

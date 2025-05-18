@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import { Metadata } from 'next'
 import Image from 'next/image'
-import Carousel from './_components/carousel'
+import CarouselProduct from './_components/carousel'
 import instance from '@/lib/axios'
 import { Iproduct } from '@/types'
 import SectionBottom from './_components/section-bottom'
@@ -36,7 +36,7 @@ export default async function Home() {
             <div className="flex flex-col md:flex-row order-1 md:order-2 gap-4 justify-center items-center z-0">
                <div className="w-[300px] md:w-full flex justify-center">
                   <Image
-                     src="/images/sect1.png"
+                     src="/images/head1.png"
                      alt="gambar1"
                      width={600}
                      height={300}
@@ -46,7 +46,7 @@ export default async function Home() {
                </div>
                <div className="w-[300px] md:w-full flex justify-center">
                   <Image
-                     src="/images/sect2.png"
+                     src="/images/head2.png"
                      alt="gambar2"
                      width={600}
                      height={300}
@@ -61,14 +61,15 @@ export default async function Home() {
                New <br />
                This Week
             </h1>
-
-            <Carousel data={newProduct} />
+            <div className="container px-6 flex justify-center">
+               <CarouselProduct data={newProduct} />
+            </div>
          </div>
          <div className="text-center space-y-2">
             <h1 className="md:text-5xl tracking-widest text-3xl">
                Our Approach to fashion design
             </h1>
-            <p className='mb-4'>
+            <p className="mb-4">
                at elegant vogue , we blend creativity with craftsmanship to
                create <br /> fashion that transcends trends and stands the test
                of time each <br /> design is meticulously crafted, ensuring the

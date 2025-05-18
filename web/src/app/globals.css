@@ -113,12 +113,30 @@
 }
 
 @layer base {
+   html {
+      scroll-behavior: smooth;
+   }
    * {
       @apply border-border outline-ring/50;
+      ::-webkit-scrollbar {
+         width: 12px;
+         height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+         background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+         background: #ffe4e6;
+         border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+         background: #ffe4e6;
+      }
    }
    body {
-     
-
       background-image: repeating-linear-gradient(
          to left,
          white,
@@ -128,4 +146,3 @@
       );
    }
 }
-

@@ -1,4 +1,5 @@
 interface Iproduct {
+   id:string
    name: string
    price: number
    stok: number

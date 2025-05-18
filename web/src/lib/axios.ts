@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const instance = axios.create({
    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
-   withCredentials: true // agar cookie (refresh_token) terkirim otomatis
+   withCredentials: true
 })
 
 let isRefreshing = false

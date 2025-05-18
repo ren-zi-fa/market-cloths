@@ -24,7 +24,9 @@ import {
 import { useProfile } from '@/hooks/use-profile'
 import instance from '@/lib/axios'
 import { useRouter } from 'next/navigation'
-
+import { useEffect, useState } from 'react'
+import { Iproduct } from '@/types'
+import { useCart } from '@/hooks/use-cart'
 
 export default function Navbar() {
    const { user, loading } = useProfile()
@@ -33,6 +35,9 @@ export default function Navbar() {
       await instance.post('/api/auth/logout')
       router.replace('/auth/login')
    }
+
+   const { cartCount } = useCart()
+
    return (
       <header className="sticky top-0 z-50 w-full px-2 md:px-8 bg-white/30 backdrop-blur">
          <div className="container flex h-16 items-center gap-4 mx-auto justify-between">
@@ -83,11 +88,19 @@ export default function Navbar() {
             {/* Kanan: Icon (desktop) */}
             <div className="hidden md:flex items-center space-x-8">
                <Heart />
-               <ShoppingBag />
+               <div className="relative">
+                  <ShoppingBag className="w-6 h-6" />
+
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                     {cartCount}
+                  </span>
+               </div>
+
                <div className="">
                   <DropdownMenu>
-                     <DropdownMenuTrigger>
+                     <DropdownMenuTrigger className="flex">
                         <UserRound />
+                        {user ? user.username.slice(0, 3) : 'Guest'}
                      </DropdownMenuTrigger>
                      <DropdownMenuContent>
                         <DropdownMenuLabel>
@@ -122,9 +135,23 @@ export default function Navbar() {
                </div>
             </div>
             {/* Logo kanan hanya di mobile */}
-            <Link href="/" className="flex md:hidden ml-auto">
-               <Image src={Logom} priority alt="logo" className="h-8 w-auto" />
-            </Link>
+            <div className="flex md:hidden ml-auto gap-4">
+               <div className="relative">
+                  <ShoppingBag className="w-6 h-6" />
+
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                     {cartCount}
+                  </span>
+               </div>
+               <Link href="/" className="">
+                  <Image
+                     src={Logom}
+                     priority
+                     alt="logo"
+                     className="h-8 w-auto"
+                  />
+               </Link>
+            </div>
          </div>
       </header>
    )
