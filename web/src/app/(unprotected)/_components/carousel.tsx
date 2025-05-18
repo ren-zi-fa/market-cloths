@@ -71,7 +71,7 @@ export default function CarouselProduct({ data }: { data: CarouselProps[] }) {
                                  className="w-full mt-1"
                                  onClick={() => handleAddToCart(item)}
                               >
-                                 <Plus className="mr-2 h-4 w-4" /> Checkout
+                                 <Plus className="mr-2 h-4 w-4" /> Add
                               </Button>
                            </CardFooter>
                         </Card>

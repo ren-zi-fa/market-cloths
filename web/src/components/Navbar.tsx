@@ -1,5 +1,5 @@
 'use client'
-import { AlignLeft, Heart, ShoppingBag, UserRound } from 'lucide-react'
+import { AlignLeft} from 'lucide-react'
 import { Nav_Links } from '@/constants/navbar'
 import {
    Sheet,
@@ -13,20 +13,13 @@ import {
 import Link from 'next/link'
 import Logom from '@/assets/logo.png'
 import Image from 'next/image'
-import {
-   DropdownMenu,
-   DropdownMenuContent,
-   DropdownMenuItem,
-   DropdownMenuLabel,
-   DropdownMenuSeparator,
-   DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
+
 import { useProfile } from '@/hooks/use-profile'
 import instance from '@/lib/axios'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { Iproduct } from '@/types'
 import { useCart } from '@/hooks/use-cart'
+import UserNav from './user-nav'
+import CheckoutCart from '@/app/(unprotected)/_components/checkoutCart'
 
 export default function Navbar() {
    const { user, loading } = useProfile()
@@ -35,15 +28,11 @@ export default function Navbar() {
       await instance.post('/api/auth/logout')
       router.replace('/auth/login')
    }
-
    const { cartCount } = useCart()
-
    return (
       <header className="sticky top-0 z-50 w-full px-2 md:px-8 bg-white/30 backdrop-blur">
          <div className="container flex h-16 items-center gap-4 mx-auto justify-between">
-            {/* Kiri: SheetTrigger dan Nav Links */}
             <div className="flex items-center gap-3">
-               {/* SheetTrigger di kiri */}
                <Sheet>
                   <SheetTrigger className="md:hidden" asChild>
                      <button>
@@ -87,62 +76,13 @@ export default function Navbar() {
             </Link>
             {/* Kanan: Icon (desktop) */}
             <div className="hidden md:flex items-center space-x-8">
-               <Heart />
-               <div className="relative">
-                  <ShoppingBag className="w-6 h-6" />
-
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                     {cartCount}
-                  </span>
-               </div>
-
-               <div className="">
-                  <DropdownMenu>
-                     <DropdownMenuTrigger className="flex">
-                        <UserRound />
-                        {user ? user.username.slice(0, 3) : 'Guest'}
-                     </DropdownMenuTrigger>
-                     <DropdownMenuContent>
-                        <DropdownMenuLabel>
-                           {loading
-                              ? 'Loading...'
-                              : user
-                                ? `Hi, ${user.username}`
-                                : 'Guest'}
-                        </DropdownMenuLabel>
-                        <DropdownMenuLabel>
-                           {loading ? (
-                              'Loading...'
-                           ) : user && user.role === 'admin' ? (
-                              <Link href="/dashboard">Dashboard</Link>
-                           ) : null}
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {user ? (
-                           <>
-                              <DropdownMenuItem>Profile</DropdownMenuItem>
-                              <DropdownMenuItem onClick={onLogout}>
-                                 Logout
-                              </DropdownMenuItem>
-                           </>
-                        ) : (
-                           <DropdownMenuItem asChild>
-                              <Link href="/auth/login">Login</Link>
-                           </DropdownMenuItem>
-                        )}
-                     </DropdownMenuContent>
-                  </DropdownMenu>
-               </div>
+             
+               <CheckoutCart cartCount={cartCount} />
+               <UserNav loading={loading} onLogout={onLogout} user={user} />
             </div>
             {/* Logo kanan hanya di mobile */}
             <div className="flex md:hidden ml-auto gap-4">
-               <div className="relative">
-                  <ShoppingBag className="w-6 h-6" />
-
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                     {cartCount}
-                  </span>
-               </div>
+               <CheckoutCart cartCount={cartCount} />
                <Link href="/" className="">
                   <Image
                      src={Logom}

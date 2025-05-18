@@ -9,7 +9,10 @@ export default function BaseLayout({
    children: React.ReactNode
 }) {
    return (
-      <main className={`${agdasima.className} tracking-widest  antialiased`}>
+      <main
+         className={`${agdasima.className} tracking-widest  antialiased`}
+   
+      >
          <CartProvider>
             <Navbar />
             {children}
