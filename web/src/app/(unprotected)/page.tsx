@@ -6,10 +6,12 @@ import Image from 'next/image'
 import Carousel from './_components/carousel'
 import instance from '@/lib/axios'
 import { Iproduct } from '@/types'
+import SectionBottom from './_components/section-bottom'
 export const metadata: Metadata = {
    title: 'Home',
    description: 'Home page'
 }
+
 export default async function Home() {
    const { data } = await instance.get('/api/products?new=false')
    const newProduct: Iproduct[] = data.data
@@ -31,7 +33,7 @@ export default async function Home() {
                </Button>
             </div>
             {/* Images Section */}
-            <div className="flex flex-col md:flex-row order-1 md:order-2 gap-4 justify-center items-center">
+            <div className="flex flex-col md:flex-row order-1 md:order-2 gap-4 justify-center items-center z-0">
                <div className="w-[300px] md:w-full flex justify-center">
                   <Image
                      src="/images/sect1.png"
@@ -61,6 +63,18 @@ export default async function Home() {
             </h1>
 
             <Carousel data={newProduct} />
+         </div>
+         <div className="text-center space-y-2">
+            <h1 className="md:text-5xl tracking-widest text-3xl">
+               Our Approach to fashion design
+            </h1>
+            <p className='mb-4'>
+               at elegant vogue , we blend creativity with craftsmanship to
+               create <br /> fashion that transcends trends and stands the test
+               of time each <br /> design is meticulously crafted, ensuring the
+               highest quelity exqulsite finish
+            </p>
+            <SectionBottom />
          </div>
       </div>
    )

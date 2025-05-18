@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express'
+import { Router } from 'express'
 
 import { query } from 'express-validator'
 import { productSchema } from '../validation/product.validation'
@@ -7,11 +7,10 @@ const router = Router()
 
 router
    .route('/products')
-   .post(productSchema, productController.saveProduct)
+   .post(productSchema, productController.handleCreateProduct)
    .get(
       [query('new').optional().isBoolean().toBoolean()],
-      productController.getProduct
+      productController.handleGetProduct
    )
-
 
 export default router

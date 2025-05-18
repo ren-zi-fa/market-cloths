@@ -11,13 +11,13 @@ router.post(
    '/login',
    ensureEmailOrUsername,
    loginValidation,
-   authController.login
+   authController.handleLogin
 )
 
 // Register route
-router.post('/register', registerValidation, authController.register)
-router.post('/logout', authController.logout)
-router.post('/refresh-token', authController.refreshToken)
-router.get('/profile', authController.profile)
+router.post('/register', registerValidation, authController.handleRegister)
+router.post('/logout', authController.handleLogout)
+router.post('/refresh-token', authController.handleRefreshToken)
+router.get('/profile', authController.hadnleProfile)
 
 export default router

@@ -3,7 +3,7 @@ import { db } from '../config/firebase'
 import { matchedData, validationResult } from 'express-validator'
 import { fetchProducts } from '../services/productService'
 
-const getProduct = async (req: Request, res: Response, next: NextFunction) => {
+const handleGetProduct = async (req: Request, res: Response, next: NextFunction) => {
    try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
@@ -24,7 +24,7 @@ const getProduct = async (req: Request, res: Response, next: NextFunction) => {
    }
 }
 
-const saveProduct = async (req: Request, res: Response) => {
+const handleCreateProduct = async (req: Request, res: Response) => {
    const err = validationResult(req)
    if (!err.isEmpty()) {
       res.status(400).json({
@@ -55,4 +55,4 @@ const saveProduct = async (req: Request, res: Response) => {
    }
 }
 
-export { getProduct, saveProduct }
+export { handleGetProduct, handleCreateProduct }

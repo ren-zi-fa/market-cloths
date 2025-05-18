@@ -19,7 +19,7 @@ import { isUserExist } from '../services/userService'
 import crypto from 'node:crypto'
 
 
-const register = async (req: Request, res: Response) => {
+const handleRegister = async (req: Request, res: Response) => {
    try {
       const role: Role = 'user'
       const result = validationResult(req)
@@ -66,7 +66,7 @@ const register = async (req: Request, res: Response) => {
    }
 }
 
-const login = async (req: Request, res: Response) => {
+const handleLogin = async (req: Request, res: Response) => {
    try {
       const result = validationResult(req)
       if (!result.isEmpty()) {
@@ -145,7 +145,7 @@ const login = async (req: Request, res: Response) => {
    }
 }
 
-const logout = async (req: Request, res: Response) => {
+const handleLogout = async (req: Request, res: Response) => {
    try {
       const refresh_token = req.cookies?.refresh_token
       if (!refresh_token) {
@@ -164,7 +164,7 @@ const logout = async (req: Request, res: Response) => {
    }
 }
 
-const refreshToken = async (req: Request, res: Response) => {
+const handleRefreshToken = async (req: Request, res: Response) => {
    try {
       const refresh_token = req.cookies?.refresh_token
       if (!refresh_token) {
@@ -211,7 +211,7 @@ const refreshToken = async (req: Request, res: Response) => {
    }
 }
 
-const profile = async (req: Request, res: Response) => {
+const hadnleProfile = async (req: Request, res: Response) => {
    try {
       const token = req.cookies?.access_token
       if (!token) {
@@ -248,4 +248,4 @@ const profile = async (req: Request, res: Response) => {
    }
 }
 
-export { register, login, logout, refreshToken, profile }
+export { handleRegister, handleLogin, handleLogout, handleRefreshToken, hadnleProfile }

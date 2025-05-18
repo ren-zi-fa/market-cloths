@@ -18,7 +18,7 @@ export default function Carousel({ data }: { data: CarouselProps[] }) {
 
    return (
       <div className="h-screen">
-         <div className="relative w-full max-w-4xl mx-auto h-full -400 flex items-center justify-center overflow-hidden">
+         <div className="relative w-full max-w-4xl mx-auto h-full p-7  flex items-center justify-center overflow-hidden">
             <AnimatePresence initial={false}>
                {[index - 1, index, index + 1].map((i, idx) => {
                   const item = getItem(i)
@@ -38,13 +38,13 @@ export default function Carousel({ data }: { data: CarouselProps[] }) {
                         exit={{ opacity: 0, scale: 0.7 }}
                         transition={{ duration: 0.5 }}
                      >
-                        <Card className="w-60 h-80 flex flex-col items-center overflow-hidden">
+                        <Card className="w-64 md:w-100 h-100 flex flex-col items-center overflow-hidden">
                            <Image
                               src={item.image_url[0]}
                               alt={item.name}
                               width={200}
                               height={300}
-                              className="w-full h-40 object-contain p-2"
+                              className="w-full h-60 object-contain p-2"
                            />
                            <CardContent className="text-center space-y-1">
                               <h2 className="font-bold text-lg">{item.name}</h2>
