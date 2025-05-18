@@ -4,7 +4,8 @@ import { matchedData, validationResult } from 'express-validator'
 import {
    createCategory,
    createProduct,
-   fetchProducts
+   fetchProducts,
+   getCategories
 } from '../services/productService'
 
 const handleGetProduct = async (req: Request, res: Response) => {
@@ -110,4 +111,28 @@ const handleCreateCategory = async (req: Request, res: Response) => {
       return
    }
 }
-export { handleGetProduct, handleCreateProduct, handleCreateCategory }
+const handleGetCategories = async (req: Request, res: Response) => {
+   try {
+      const categories = await getCategories()
+
+      res.status(200).json({
+         success: true,
+         message: 'Data kategori berhasil diambil',
+         data: categories
+      })
+      return
+   } catch (error) {
+      res.status(500).json({
+         success: false,
+         message: 'Terjadi kesalahan saat mengambil data kategori',
+         error: error instanceof Error ? error.message : error
+      })
+      return
+   }
+}
+export {
+   handleGetProduct,
+   handleCreateProduct,
+   handleCreateCategory,
+   handleGetCategories
+}

@@ -18,6 +18,7 @@ router
 
 router
    .route('/categories')
+   .get(productController.handleGetCategories)
    .post(categoryValidation, productController.handleCreateCategory)
 
 export default router

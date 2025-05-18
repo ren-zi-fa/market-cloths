@@ -17,5 +17,20 @@ interface Access_Token {
    iat: number
    exp: number
 }
+interface Product {
+   name: string
+   description: string
+   price: number
+   stok: number
+   image_url: string[]
+   categoryId: string
+   categoryName: string
+   createdAt: Date
+}
 
-export type { UserModel, Role, Access_Token }
+interface Category {
+   id: string
+   name: string
+   description: string
+}
+export type { UserModel, Role, Access_Token, Product, Category }

@@ -1,15 +1,7 @@
 import { db } from '../config/firebase'
+import { Category, Product } from '../types'
 
-interface Product {
-  name: string;
-  description: string;
-  price: number;
-  stok: number;
-  image_url: string[];
-  categoryId: string;
-  categoryName: string;
-  createdAt: Date;
-}
+
 export const createProduct = async (productData: Product) => {
    const docRef = await db.collection('product').add(productData)
    return docRef.id
@@ -53,4 +45,13 @@ export async function createCategory({
       name,
       description
    })
+}
+
+
+export async function getCategories(): Promise<Category[]> {
+  const snapshot = await db.collection('category').get();
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  })) as Category[];
 }
