@@ -34,6 +34,7 @@ export default function FormProduct() {
          image_url: ['']
       }
    })
+   
 
    const onSubmit = async (values: ProductFormValues) => {
       setLoading(true)

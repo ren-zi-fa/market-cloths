@@ -15,10 +15,14 @@ interface User {
    role: string
 }
 type FieldErrorMessage = {
-  type: 'field';
-  path: string;
-  msg: string;
-};
+   type: 'field'
+   path: string
+   msg: string
+}
+type Category = {
+   id: string
+   name: string
+   description: string
+}
 
-
-export type { Iproduct, User,FieldErrorMessage }
+export type { Iproduct, User, FieldErrorMessage, Category }

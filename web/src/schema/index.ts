@@ -9,7 +9,7 @@ export const productSchema = z.object({
    image_url: z.array(z.string().url({ message: 'URL gambar tidak valid' }), {
       message: 'Gambar produk wajib diisi'
    }),
-   category_name: z.string()
+   categoryName: z.string({ message: 'nama category wajib di isi' })
 })
 
 export const category_schema = z.object({
