@@ -8,7 +8,14 @@ export const productSchema = z.object({
    description: z.string({ message: 'Deskripsi produk wajib diisi' }),
    image_url: z.array(z.string().url({ message: 'URL gambar tidak valid' }), {
       message: 'Gambar produk wajib diisi'
-   })
+   }),
+   category_name: z.string()
+})
+
+export const category_schema = z.object({
+   id: z.string().optional(),
+   name: z.string({ message: 'nama category wajib di isi' }),
+   description: z.string({ message: 'deskripsi wajib di isi' })
 })
 
 export const RegisterSchema = z
@@ -21,7 +28,7 @@ export const RegisterSchema = z
          .regex(/[a-zA-Z]/, 'Password harus mengandung huruf')
          .regex(/[0-9]/, 'Password harus mengandung angka'),
       konfirmasi_password: z.string(),
-      makanan_favorite:z.string().min(3, 'Username minimal 3 karakter'),
+      makanan_favorite: z.string().min(3, 'Username minimal 3 karakter')
    })
 
    .refine((data) => data.password === data.konfirmasi_password, {

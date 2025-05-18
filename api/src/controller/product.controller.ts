@@ -1,16 +1,20 @@
-import { NextFunction, Request, Response } from 'express'
-import { db } from '../config/firebase'
-import { matchedData, validationResult } from 'express-validator'
-import { fetchProducts } from '../services/productService'
+import { Request, Response } from 'express'
 
-const handleGetProduct = async (req: Request, res: Response, next: NextFunction) => {
+import { matchedData, validationResult } from 'express-validator'
+import {
+   createCategory,
+   createProduct,
+   fetchProducts
+} from '../services/productService'
+
+const handleGetProduct = async (req: Request, res: Response) => {
    try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
          res.status(400).json({ errors: errors.array() })
          return
       }
-     
+
       const data = matchedData(req, { locations: ['query'] })
       const isNew = data.new as boolean
 
@@ -25,34 +29,85 @@ const handleGetProduct = async (req: Request, res: Response, next: NextFunction)
 }
 
 const handleCreateProduct = async (req: Request, res: Response) => {
-   const err = validationResult(req)
-   if (!err.isEmpty()) {
+   const errors = validationResult(req)
+   if (!errors.isEmpty()) {
       res.status(400).json({
          success: false,
-         message: err.array()
+         message: errors.array()
       })
       return
    }
+
    const data = matchedData(req)
+   const {
+      name,
+      image_url,
+      price,
+      stok,
+      description,
+      categoryId,
+      categoryName
+   } = data
    try {
-      // Tambahkan field createdAt dengan waktu saat ini
       const productData = {
-         ...data,
+         name,
+         categoryId,
+         categoryName,
+         price,
+         stok,
+         description,
+         image_url,
          createdAt: new Date()
       }
-      const docRef = await db.collection('product').add(productData)
+
+      const id = await createProduct(productData)
+
       res.status(201).json({
          success: true,
-         id: docRef.id,
-         data: productData
+         id,
+         message: 'data berhasil di tambahkan'
       })
+      return
    } catch (error) {
       res.status(500).json({
          success: false,
-         message: 'Gagal menyimpan produk',
+         message: 'Internal server error',
          error: error instanceof Error ? error.message : error
       })
+      return
    }
 }
 
-export { handleGetProduct, handleCreateProduct }
+const handleCreateCategory = async (req: Request, res: Response) => {
+   try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+         res.status(400).json({
+            success: false,
+            message: 'Validation failed',
+            errors: errors.array()
+         })
+         return
+      }
+
+      const data = matchedData(req)
+      const { name, description } = data
+
+      await createCategory({ name, description })
+
+      res.status(201).json({
+         success: true,
+         message: 'Category created successfully'
+      })
+      return
+   } catch (err) {
+      console.error(err) // log ke konsol jika diperlukan
+      res.status(500).json({
+         success: false,
+         message: 'Internal server error',
+         error: err instanceof Error ? err.message : String(err)
+      })
+      return
+   }
+}
+export { handleGetProduct, handleCreateProduct, handleCreateCategory }

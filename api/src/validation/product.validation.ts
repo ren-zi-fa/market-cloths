@@ -1,6 +1,9 @@
-import { checkSchema } from 'express-validator'
+import { checkSchema, ParamSchema } from 'express-validator'
 
-const productSchema = checkSchema({
+type FieldSchema = Record<string, ParamSchema>
+
+// Definisikan schema validasi sebagai object biasa
+const productSchema: FieldSchema = {
    name: {
       in: ['body'],
       notEmpty: {
@@ -42,7 +45,40 @@ const productSchema = checkSchema({
       isArray: {
          errorMessage: 'Gambar produk wajib diisi dan berupa array'
       }
+   },
+   categoryId: {
+      in: ['body'],
+      notEmpty: { errorMessage: 'ID kategori wajib diisi' },
+      isString: { errorMessage: 'ID kategori harus berupa string' }
+   },
+   categoryName: {
+      in: ['body'],
+      notEmpty: { errorMessage: 'Nama kategori wajib diisi' },
+      isString: { errorMessage: 'Nama kategori harus berupa string' }
    }
-})
+}
+const categorySchema: FieldSchema = {
+   name: {
+      in: ['body'],
+      notEmpty: {
+         errorMessage: 'Name is required'
+      },
+      isString: {
+         errorMessage: 'Name must be a string'
+      }
+   },
+   description: {
+      in: ['body'],
+      notEmpty: {
+         errorMessage: 'Description is required'
+      },
+      isString: {
+         errorMessage: 'Description must be a string'
+      }
+   }
+}
 
-export { productSchema }
+const productValidation = checkSchema(productSchema)
+const categoryValidation = checkSchema(categorySchema)
+
+export { productValidation, categoryValidation }

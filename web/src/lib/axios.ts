@@ -44,14 +44,14 @@ instance.interceptors.response.use(
          isRefreshing = true
 
          try {
-            const res = await instance.post(
+            await instance.post(
                '/api/auth/refresh-token',
                {},
                {
                   withCredentials: true
                }
             )
-            console.log(res.data)
+
             processQueue(null, null)
 
             return instance(originalRequest)

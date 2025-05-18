@@ -1,29 +1,56 @@
 import { db } from '../config/firebase'
 
-export const fetchProducts = async (isNew?: boolean) => {
- 
-     const productsRef = db.collection('product').orderBy('createdAt', 'desc')
+interface Product {
+  name: string;
+  description: string;
+  price: number;
+  stok: number;
+  image_url: string[];
+  categoryId: string;
+  categoryName: string;
+  createdAt: Date;
+}
+export const createProduct = async (productData: Product) => {
+   const docRef = await db.collection('product').add(productData)
+   return docRef.id
+}
 
-     let queryRef = productsRef
+export async function fetchProducts(isNew?: boolean) {
+   const productsRef = db.collection('product').orderBy('createdAt', 'desc')
 
-     if (isNew === true) {
-       queryRef = queryRef.limit(8)  // ambil 5 produk terbaru
-     } else if (isNew === false) {
-       queryRef = queryRef.limit(10) // ambil 10 produk terbaru
-     }
-     // jika isNew undefined ambil semua produk tanpa limit
+   let queryRef = productsRef
 
-     const snapshot = await queryRef.get()
+   if (isNew === true) {
+      queryRef = queryRef.limit(8) // ambil 5 produk terbaru
+   } else if (isNew === false) {
+      queryRef = queryRef.limit(10) // ambil 10 produk terbaru
+   }
+   // jika isNew undefined ambil semua produk tanpa limit
 
-     return snapshot.docs.map((doc) => {
-       const data = doc.data()
-       return {
+   const snapshot = await queryRef.get()
+
+   return snapshot.docs.map((doc) => {
+      const data = doc.data()
+      return {
          id: doc.id,
          ...data,
          createdAt:
-           data.createdAt && data.createdAt.toDate
-             ? data.createdAt.toDate().toISOString()
-             : data.createdAt,
-       }
-     })
+            data.createdAt && data.createdAt.toDate
+               ? data.createdAt.toDate().toISOString()
+               : data.createdAt
+      }
+   })
+}
+
+export async function createCategory({
+   name,
+   description
+}: {
+   name: string
+   description: string
+}) {
+   return db.collection('category').add({
+      name,
+      description
+   })
 }

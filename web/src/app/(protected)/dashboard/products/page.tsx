@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import FormProduct from './_components/FormProduct'
+import FormProduct from '../_components/FormProduct'
 
 export const metadata: Metadata = {
    title: 'Manage Products',
