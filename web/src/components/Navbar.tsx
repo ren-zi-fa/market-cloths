@@ -1,5 +1,6 @@
 'use client'
-import { AlignLeft} from 'lucide-react'
+
+import { AlignLeft } from 'lucide-react'
 import { Nav_Links } from '@/constants/navbar'
 import {
    Sheet,
@@ -24,14 +25,20 @@ import CheckoutCart from '@/app/(unprotected)/_components/checkoutCart'
 export default function Navbar() {
    const { user, loading } = useProfile()
    const router = useRouter()
+   const { cartCount } = useCart()
+
    const onLogout = async () => {
       await instance.post('/api/auth/logout')
       router.replace('/auth/login')
    }
-   const { cartCount } = useCart()
+
    return (
       <header className="sticky top-0 z-50 w-full px-2 md:px-8 bg-white/30 backdrop-blur">
          <div className="container flex h-16 items-center gap-4 mx-auto justify-between">
+            {/* Kiri: navigasi dan menu */}
+            <Link href="/" className="hidden md:flex">
+               <Image src={Logom} alt="logo" priority />
+            </Link>
             <div className="flex items-center gap-3">
                <Sheet>
                   <SheetTrigger className="md:hidden" asChild>
@@ -70,27 +77,29 @@ export default function Navbar() {
                   ))}
                </nav>
             </div>
-            {/* Logo tengah hanya di desktop */}
-            <Link href="/" className="hidden md:flex">
-               <Image src={Logom} alt="logo" priority />
-            </Link>
-            {/* Kanan: Icon (desktop) */}
-            <div className="hidden md:flex items-center space-x-8">
-             
+
+            {/* Logo tengah desktop */}
+
+            {/* Kanan: checkoutCart selalu render sekali */}
+            <div className="flex items-center space-x-6 md:space-x-8 ml-auto">
                <CheckoutCart cartCount={cartCount} />
-               <UserNav loading={loading} onLogout={onLogout} user={user} />
-            </div>
-            {/* Logo kanan hanya di mobile */}
-            <div className="flex md:hidden ml-auto gap-4">
-               <CheckoutCart cartCount={cartCount} />
-               <Link href="/" className="">
-                  <Image
-                     src={Logom}
-                     priority
-                     alt="logo"
-                     className="h-8 w-auto"
-                  />
-               </Link>
+
+               {/* Desktop: UserNav */}
+               <div className="hidden md:flex">
+                  <UserNav loading={loading} onLogout={onLogout} user={user} />
+               </div>
+
+               {/* Mobile: Logo */}
+               <div className="md:hidden">
+                  <Link href="/">
+                     <Image
+                        src={Logom}
+                        priority
+                        alt="logo"
+                        className="h-8 w-auto"
+                     />
+                  </Link>
+               </div>
             </div>
          </div>
       </header>
