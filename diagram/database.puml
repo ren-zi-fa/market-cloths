@@ -1,0 +1,46 @@
+@startuml market_nosql
+
+' Styling
+skinparam class {
+  BackgroundColor #FDF6E3
+  BorderColor #657B83
+  BorderThickness 1
+  ArrowColor Black
+}
+
+' Product Document (Category embedded)
+class Product {
+  + id: string
+  name: string
+  description: string
+  createdAt: timestamp
+  image_url: List<string>
+  price: number
+  stok: number
+  category: {
+    id: string
+    name: string
+    description:string
+  }
+
+
+' User Document
+class User {
+  + id: string
+  email: string
+  password: string
+  role: string <<user | admin>>
+  makanan_favorite: string
+}
+
+' Refresh Token Document (userId as ref)
+class RefreshToken {
+  + id: string
+  createdAt: timestamp
+  expiresAt: timestamp
+  revoke: boolean
+  token: string
+  userId: string
+}
+
+@enduml
