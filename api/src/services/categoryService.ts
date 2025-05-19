@@ -58,3 +58,18 @@ export async function deleteCategoryByIds(
 
    return { deletedCount, notFoundIds }
 }
+
+export async function updateCategoryById(
+   id: string,
+   data: Partial<{ name: string; description: string }>
+): Promise<boolean> {
+   const docRef = db.collection('category').doc(id)
+   const doc = await docRef.get()
+
+   if (!doc.exists) {
+      return false
+   }
+
+   await docRef.update(data)
+   return true
+}

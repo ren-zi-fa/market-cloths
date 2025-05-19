@@ -1,7 +1,13 @@
 import { Request, Response } from 'express'
 
 import { matchedData, validationResult } from 'express-validator'
-import { createCategory, deleteCategoryById, deleteCategoryByIds, getCategories } from '../services/categoryService'
+import {
+   createCategory,
+   deleteCategoryById,
+   deleteCategoryByIds,
+   getCategories,
+   updateCategoryById
+} from '../services/categoryService'
 
 const handleCreateCategory = async (req: Request, res: Response) => {
    try {
@@ -127,16 +133,48 @@ const handleBulkDeleteCategory = async (req: Request, res: Response) => {
 }
 
 const handleUpdateCategory = async (req: Request, res: Response) => {
-   const error = validationResult(req)
-   if (!error.isEmpty) {
+   const errors = validationResult(req)
+   if (!errors.isEmpty()) {
       res.status(400).json({
          success: false,
          message: 'Validation failed',
-         error: error.array()
+         errors: errors.array()
+      })
+      return
+   }
+
+   const id = req.params.id
+   const data = matchedData(req)
+
+   // Validasi: minimal salah satu dari name atau description harus ada
+   if (!data.name && !data.description) {
+      res.status(400).json({
+         success: false,
+         message: 'At least one of name or description must be provided'
+      })
+      return
+   }
+
+   try {
+      const updated = await updateCategoryById(id, data)
+      if (!updated) {
+         res.status(404).json({
+            success: false,
+            message: 'Category not found'
+         })
+         return
+      }
+      res.status(200).json({
+         success: true,
+         message: 'Category updated successfully'
+      })
+   } catch (error) {
+      console.error('Update category error:', error)
+      res.status(500).json({
+         success: false,
+         message: 'Internal server error'
       })
    }
-   const id = req.params.id
-   res.send(id)
 }
 
 export {
