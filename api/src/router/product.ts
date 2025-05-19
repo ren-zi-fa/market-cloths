@@ -69,6 +69,9 @@ router
       productController.handleUpdateCategory
    )
 
+   
+router
+   .route('/categories/:id')
    .delete(
       [
          param('id')
