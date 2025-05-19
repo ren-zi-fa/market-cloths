@@ -86,13 +86,7 @@ export default function Navbar() {
 
                {/* Desktop: UserNav */}
                <div className="hidden md:flex">
-                  {user && (
-                     <UserNav
-                        loading={loading}
-                        onLogout={onLogout}
-                        user={user}
-                     />
-                  )}
+                  <UserNav loading={loading} onLogout={onLogout} user={user} />
                </div>
 
                {/* Mobile: Logo */}

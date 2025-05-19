@@ -10,9 +10,9 @@ import { User } from '@/types'
 import { UserRound } from 'lucide-react'
 import Link from 'next/link'
 
-type UserProps = Omit<User,"tokenType">
+type UserProps = Omit<User, 'tokenType'>
 interface UserNavProps {
-   user:UserProps
+   user?: UserProps | null
    loading: boolean
    onLogout: () => void
 }
