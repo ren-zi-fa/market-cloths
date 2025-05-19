@@ -19,11 +19,14 @@ import {
 import { toast } from 'sonner'
 import instance from '@/lib/axios'
 import axios from 'axios'
+import { useCategory } from '@/hooks/use-category'
 
 type ProductFormValues = z.infer<typeof productSchema>
 
 export default function FormProduct() {
    const [loading, setLoading] = useState(false)
+   const { category } = useCategory()
+   console.log(category)
    const form = useForm<ProductFormValues>({
       resolver: zodResolver(productSchema),
       defaultValues: {
@@ -34,7 +37,6 @@ export default function FormProduct() {
          image_url: ['']
       }
    })
-   
 
    const onSubmit = async (values: ProductFormValues) => {
       setLoading(true)

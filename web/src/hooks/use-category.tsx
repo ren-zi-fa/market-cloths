@@ -13,30 +13,33 @@ import instance from '@/lib/axios'
 
 type CategoryItem = Category
 
-interface CatergoryContextType {
+interface CategoryContextType {
    category: CategoryItem[]
+   setCategory: React.Dispatch<React.SetStateAction<CategoryItem[]>>
 }
 
-const CategoryContext = createContext<CatergoryContextType | undefined>(
+const CategoryContext = createContext<CategoryContextType | undefined>(
    undefined
 )
 
-export const CategoryProvider = async ({
-   children
-}: {
-   children: ReactNode
-}) => {
+export const CategoryProvider = ({ children }: { children: ReactNode }) => {
    const [category, setCategory] = useState<CategoryItem[]>([])
-   const categoryRes = await instance.get('/api/categories')
-   setCategory(categoryRes.data)
-   useEffect(() => {}, [])
 
-   const value = useMemo(
-      () => ({
-         category
-      }),
-      [category]
-   )
+   useEffect(() => {
+      const fetchCategories = async () => {
+         try {
+            const response = await instance.get('/api/categories')
+            setCategory(response.data.data)
+         } catch (error) {
+            console.error('Gagal mengambil kategori:', error)
+         }
+      }
+
+      fetchCategories()
+   }, [])
+
+   const value = useMemo(() => ({ category, setCategory }), [category])
+
    return (
       <CategoryContext.Provider value={value}>
          {children}
@@ -44,10 +47,10 @@ export const CategoryProvider = async ({
    )
 }
 
-export const useCart = () => {
+export const useCategory = () => {
    const context = useContext(CategoryContext)
    if (!context) {
-      throw new Error('useCart harus digunakan di dalam CartProvider')
+      throw new Error('useCategory harus digunakan di dalam CategoryProvider')
    }
    return context
 }

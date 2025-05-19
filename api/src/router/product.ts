@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import { query } from 'express-validator'
+import {  param, query } from 'express-validator'
 import {
    categoryValidation,
    productValidation
@@ -20,5 +20,18 @@ router
    .route('/categories')
    .get(productController.handleGetCategories)
    .post(categoryValidation, productController.handleCreateCategory)
+
+router
+   .route('/category/:id')
+   .delete(
+      [
+         param('id')
+            .isString()
+            .withMessage('ID harus berupa string')
+            .notEmpty()
+            .withMessage('ID tidak boleh kosong')
+      ],
+      productController.handleDeleteCategory
+   )
 
 export default router

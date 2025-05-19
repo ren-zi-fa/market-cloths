@@ -4,6 +4,7 @@ import { matchedData, validationResult } from 'express-validator'
 import {
    createCategory,
    createProduct,
+   deleteCategoryById,
    fetchProducts,
    getCategories
 } from '../services/productService'
@@ -130,9 +131,38 @@ const handleGetCategories = async (req: Request, res: Response) => {
       return
    }
 }
+const handleDeleteCategory = async (req: Request, res: Response) => {
+   try {
+      // Validasi request menggunakan express-validator
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+         res.status(400).json({ errors: errors.array() })
+         return
+      }
+
+      const categoryId = req.params.id
+
+      const deleted = await deleteCategoryById(categoryId)
+
+      if (!deleted) {
+         res.status(404).json({ message: 'Category not found.' })
+         return
+      }
+
+      res.status(200).json({
+         message: `Category with id ${categoryId} deleted.`
+      })
+      return
+   } catch (error) {
+      console.error('Delete category error:', error)
+      res.status(500).json({ message: 'Internal server error' })
+      return
+   }
+}
 export {
    handleGetProduct,
    handleCreateProduct,
    handleCreateCategory,
-   handleGetCategories
+   handleGetCategories,
+   handleDeleteCategory
 }
