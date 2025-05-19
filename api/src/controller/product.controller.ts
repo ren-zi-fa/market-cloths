@@ -204,11 +204,27 @@ const handleBulkDeleteCategory = async (req: Request, res: Response) => {
    }
 }
 
+
+const handleUpdateCategory = async (req: Request, res: Response) => {
+   const error = validationResult(req)
+   if (!error.isEmpty) {
+      res.status(400).json({
+         success: false,
+         message: 'Validation failed',
+         error: error.array()
+      })
+   }
+   const id = req.params.id
+   res.send(id)
+}
+
 export {
    handleGetProduct,
    handleCreateProduct,
    handleCreateCategory,
    handleGetCategories,
    handleDeleteCategory,
+   handleBulkDeleteCategory,
+   handleUpdateCategory
    handleBulkDeleteCategory
 }
