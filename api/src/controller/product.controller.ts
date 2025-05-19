@@ -5,6 +5,7 @@ import {
    createCategory,
    createProduct,
    deleteCategoryById,
+   deleteCategoryByIds,
    fetchProducts,
    getCategories
 } from '../services/productService'
@@ -21,7 +22,7 @@ const handleGetProduct = async (req: Request, res: Response) => {
       const isNew = data.new as boolean
 
       const products = await fetchProducts(isNew)
-      res.json({ data: products })
+      res.json({ success: true, data: products })
    } catch (error) {
       res.status(500).json({
          success: false,
@@ -103,7 +104,7 @@ const handleCreateCategory = async (req: Request, res: Response) => {
       })
       return
    } catch (err) {
-      console.error(err) // log ke konsol jika diperlukan
+      console.error(err)
       res.status(500).json({
          success: false,
          message: 'Internal server error',
@@ -131,9 +132,9 @@ const handleGetCategories = async (req: Request, res: Response) => {
       return
    }
 }
+
 const handleDeleteCategory = async (req: Request, res: Response) => {
    try {
-      // Validasi request menggunakan express-validator
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
          res.status(400).json({ errors: errors.array() })
@@ -145,11 +146,15 @@ const handleDeleteCategory = async (req: Request, res: Response) => {
       const deleted = await deleteCategoryById(categoryId)
 
       if (!deleted) {
-         res.status(404).json({ message: 'Category not found.' })
+         res.status(404).json({
+            success: false,
+            message: 'Category not found.'
+         })
          return
       }
 
       res.status(200).json({
+         success: true,
          message: `Category with id ${categoryId} deleted.`
       })
       return
@@ -159,10 +164,51 @@ const handleDeleteCategory = async (req: Request, res: Response) => {
       return
    }
 }
+
+const handleBulkDeleteCategory = async (req: Request, res: Response) => {
+   const errors = validationResult(req)
+   if (!errors.isEmpty()) {
+      res.status(400).json({
+         success: false,
+         message: 'Validation failed',
+         errors: errors.array()
+      })
+      return
+   }
+
+   try {
+      const { ids } = req.body
+
+      const result = await deleteCategoryByIds(ids)
+
+      if (result.notFoundIds.length > 0) {
+         res.status(400).json({
+            success: false,
+            message: 'Beberapa ID tidak ditemukan',
+            notFoundIds: result.notFoundIds
+         })
+         return
+      }
+
+      res.status(200).json({
+         success: true,
+         message: 'Bulk delete completed',
+         deletedCount: result.deletedCount
+      })
+   } catch (error) {
+      console.error('Bulk delete category error:', error)
+      res.status(500).json({
+         success: false,
+         message: 'Internal server error'
+      })
+   }
+}
+
 export {
    handleGetProduct,
    handleCreateProduct,
    handleCreateCategory,
    handleGetCategories,
-   handleDeleteCategory
+   handleDeleteCategory,
+   handleBulkDeleteCategory
 }

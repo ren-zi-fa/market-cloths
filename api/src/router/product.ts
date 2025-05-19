@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import {  param, query } from 'express-validator'
+import { param, query, body } from 'express-validator'
 import {
    categoryValidation,
    productValidation
@@ -22,7 +22,22 @@ router
    .post(categoryValidation, productController.handleCreateCategory)
 
 router
-   .route('/category/:id')
+   .route('/categories/bulk-delete')
+   .delete(
+      [
+         body('ids')
+            .isArray({ min: 1 })
+            .withMessage('ids harus berupa array yang tidak kosong'),
+         body('ids.*')
+            .isString()
+            .notEmpty()
+            .withMessage('Setiap id harus berupa string yang tidak kosong')
+      ],
+      productController.handleBulkDeleteCategory
+   )
+   
+router
+   .route('/categories/:id')
    .delete(
       [
          param('id')
