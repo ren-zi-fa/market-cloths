@@ -1,11 +1,9 @@
 import { Router } from 'express'
 
-import { param, query, body } from 'express-validator'
-import {
-   categoryValidation,
-   productValidation
-} from '../validation/product.validation'
+import { query } from 'express-validator'
+import { productValidation } from '../validation/product.validation'
 import { productController } from '../controller'
+
 const router = Router()
 
 router
@@ -14,73 +12,6 @@ router
    .get(
       [query('new').optional().isBoolean().toBoolean()],
       productController.handleGetProduct
-   )
-
-/**
- *
- *
- */
-router
-   .route('/categories')
-   .get(productController.handleGetCategories)
-   .post(categoryValidation, productController.handleCreateCategory)
-
-router
-   .route('/categories/bulk-delete')
-   .delete(
-      [
-         body('ids')
-            .isArray({ min: 1 })
-            .withMessage('ids harus berupa array yang tidak kosong'),
-         body('ids.*')
-            .isString()
-            .notEmpty()
-            .withMessage('Setiap id harus berupa string yang tidak kosong')
-      ],
-      productController.handleBulkDeleteCategory
-   )
-
-router
-   .route('/categories/:id')
-   .put(
-      [
-         param('id')
-            .isString()
-            .trim()
-            .notEmpty()
-            .withMessage('ID tidak boleh kosong dan harus berupa string'),
-
-         body('name')
-            .optional()
-            .isString()
-            .withMessage('Name harus berupa string')
-            .trim()
-            .notEmpty()
-            .withMessage('Name tidak boleh kosong jika diberikan'),
-
-         body('description')
-            .optional()
-            .isString()
-            .withMessage('Description harus berupa string')
-            .trim()
-            .notEmpty()
-            .withMessage('Description tidak boleh kosong jika diberikan')
-      ],
-      productController.handleUpdateCategory
-   )
-
-   
-router
-   .route('/categories/:id')
-   .delete(
-      [
-         param('id')
-            .isString()
-            .withMessage('ID harus berupa string')
-            .notEmpty()
-            .withMessage('ID tidak boleh kosong')
-      ],
-      productController.handleDeleteCategory
    )
 
 export default router

@@ -1,0 +1,74 @@
+import { Router } from 'express'
+
+import { param, body } from 'express-validator'
+import {
+   categoryValidation,
+} from '../validation/product.validation'
+import { categoryController } from '../controller'
+const router = Router()
+/**
+ *
+ *
+ */
+router
+   .route('/categories')
+   .get(categoryController.handleGetCategories)
+   .post(categoryValidation, categoryController.handleCreateCategory)
+
+router
+   .route('/categories/bulk-delete')
+   .delete(
+      [
+         body('ids')
+            .isArray({ min: 1 })
+            .withMessage('ids harus berupa array yang tidak kosong'),
+         body('ids.*')
+            .isString()
+            .notEmpty()
+            .withMessage('Setiap id harus berupa string yang tidak kosong')
+      ],
+      categoryController.handleBulkDeleteCategory
+   )
+
+router
+   .route('/categories/:id')
+   .put(
+      [
+         param('id')
+            .isString()
+            .trim()
+            .notEmpty()
+            .withMessage('ID tidak boleh kosong dan harus berupa string'),
+
+         body('name')
+            .optional()
+            .isString()
+            .withMessage('Name harus berupa string')
+            .trim()
+            .notEmpty()
+            .withMessage('Name tidak boleh kosong jika diberikan'),
+
+         body('description')
+            .optional()
+            .isString()
+            .withMessage('Description harus berupa string')
+            .trim()
+            .notEmpty()
+            .withMessage('Description tidak boleh kosong jika diberikan')
+      ],
+      categoryController.handleUpdateCategory
+   )
+
+router
+   .route('/categories/:id')
+   .delete(
+      [
+         param('id')
+            .isString()
+            .withMessage('ID harus berupa string')
+            .notEmpty()
+            .withMessage('ID tidak boleh kosong')
+      ],
+      categoryController.handleDeleteCategory
+   )
+export default router
