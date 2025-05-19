@@ -59,9 +59,34 @@ export async function deleteCategoryById(id: string): Promise<boolean> {
    const doc = await docRef.get()
 
    if (!doc.exists) {
-      return false 
+      return false
    }
 
    await docRef.delete()
    return true
+}
+
+export async function deleteCategoryByIds(
+   ids: string[]
+): Promise<{ deletedCount: number; notFoundIds: string[] }> {
+   let deletedCount = 0
+   const notFoundIds: string[] = []
+   const batch = db.batch()
+
+   for (const id of ids) {
+      const docRef = db.collection('category').doc(id)
+      const doc = await docRef.get()
+      if (doc.exists) {
+         batch.delete(docRef)
+         deletedCount++
+      } else {
+         notFoundIds.push(id)
+      }
+   }
+
+   if (deletedCount > 0) {
+      await batch.commit()
+   }
+
+   return { deletedCount, notFoundIds }
 }
