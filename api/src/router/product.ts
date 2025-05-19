@@ -16,6 +16,10 @@ router
       productController.handleGetProduct
    )
 
+/**
+ *
+ *
+ */
 router
    .route('/categories')
    .get(productController.handleGetCategories)
@@ -35,9 +39,36 @@ router
       ],
       productController.handleBulkDeleteCategory
    )
-   
+
 router
    .route('/categories/:id')
+   .put(
+      [
+         param('id')
+            .isString()
+            .trim()
+            .notEmpty()
+            .withMessage('ID tidak boleh kosong dan harus berupa string'),
+
+         body('name')
+            .optional()
+            .isString()
+            .withMessage('Name harus berupa string')
+            .trim()
+            .notEmpty()
+            .withMessage('Name tidak boleh kosong jika diberikan'),
+
+         body('description')
+            .optional()
+            .isString()
+            .withMessage('Description harus berupa string')
+            .trim()
+            .notEmpty()
+            .withMessage('Description tidak boleh kosong jika diberikan')
+      ],
+      productController.handleUpdateCategory
+   )
+
    .delete(
       [
          param('id')
