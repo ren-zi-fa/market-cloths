@@ -19,13 +19,13 @@ import {
 import { toast } from 'sonner'
 import instance from '@/lib/axios'
 import axios from 'axios'
-import { useCategory } from '@/hooks/use-category'
+import { useCategoryStore } from '@/hooks/category-store'
 
 type ProductFormValues = z.infer<typeof productSchema>
 
 export default function FormProduct() {
    const [loading, setLoading] = useState(false)
-   const { category } = useCategory()
+   const { data: category } = useCategoryStore()
    console.log(category)
    const form = useForm<ProductFormValues>({
       resolver: zodResolver(productSchema),

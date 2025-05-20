@@ -11,12 +11,14 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { CategoryColumn } from './column-category'
+
 import { toast } from 'sonner'
-import FormEditCategory from './FormEditCategory'
+import { ProductColumn } from './column-product'
+
+
 
 interface CellActionProps {
-   data: CategoryColumn
+   data: ProductColumn
 }
 
 const CellAction = ({ data }: CellActionProps) => {
@@ -39,7 +41,7 @@ const CellAction = ({ data }: CellActionProps) => {
                   Copy ID
                </DropdownMenuItem>
                <DropdownMenuSeparator />
-               <FormEditCategory id={data.id} />
+               
             </DropdownMenuContent>
          </DropdownMenu>
       </>

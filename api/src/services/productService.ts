@@ -33,3 +33,64 @@ export async function fetchProducts(isNew?: boolean) {
    })
 }
 
+export async function deleteProductByid(id: string): Promise<boolean> {
+   const docRef = db.collection('product').doc(id)
+   const doc = await docRef.get()
+
+   if (!doc.exists) {
+      return false
+   }
+
+   await docRef.delete()
+   return true
+}
+
+export async function deleteProductByIds(
+   ids: string[]
+): Promise<{ deletedCount: number; notFoundIds: string[] }> {
+   let deletedCount = 0
+   const notFoundIds: string[] = []
+   const batch = db.batch()
+
+   for (const id of ids) {
+      const docRef = db.collection('product').doc(id)
+      const doc = await docRef.get()
+      if (doc.exists) {
+         batch.delete(docRef)
+         deletedCount++
+      } else {
+         notFoundIds.push(id)
+      }
+   }
+
+   if (deletedCount > 0) {
+      await batch.commit()
+   }
+
+   return { deletedCount, notFoundIds }
+}
+export async function updateProductById(
+   id: string,
+   data: Partial<{ name: string; description: string }>
+): Promise<boolean> {
+   const docRef = db.collection('product').doc(id)
+   const doc = await docRef.get()
+
+   if (!doc.exists) {
+      return false
+   }
+
+   await docRef.update(data)
+   return true
+}
+export async function getProductById(id: string): Promise<Category | null> {
+   const docRef = db.collection('product').doc(id)
+   const doc = await docRef.get()
+   if (!doc.exists) {
+      return null
+   }
+   return {
+      id: doc.id,
+      ...doc.data()
+   } as Category
+}

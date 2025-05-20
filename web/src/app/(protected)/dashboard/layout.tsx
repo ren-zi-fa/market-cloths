@@ -5,7 +5,6 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { jwtDecode } from 'jwt-decode'
 import { User } from '@/types'
-import { CategoryProvider } from '@/hooks/use-category'
 import { ProfileProvider } from '@/hooks/use-profile'
 
 export default async function DashboardLayout({
@@ -45,9 +44,7 @@ export default async function DashboardLayout({
       <SidebarProvider>
          <ProfileProvider>
             <AppSidebar variant="inset" />
-            <CategoryProvider>
-               <SidebarInset>{children}</SidebarInset>
-            </CategoryProvider>
+            <SidebarInset>{children}</SidebarInset>
          </ProfileProvider>
       </SidebarProvider>
    )

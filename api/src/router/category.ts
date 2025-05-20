@@ -52,23 +52,16 @@ router
             .optional()
             .isString()
             .withMessage('Name harus berupa string')
-            .trim()
-            .notEmpty()
-            .withMessage('Name tidak boleh kosong jika diberikan'),
+            .trim(),
 
          body('description')
             .optional()
             .isString()
             .withMessage('Description harus berupa string')
             .trim()
-            .notEmpty()
-            .withMessage('Description tidak boleh kosong jika diberikan')
       ],
       categoryController.handleUpdateCategory
    )
-
-router
-   .route('/categories/:id')
    .delete(
       [
          param('id')
@@ -79,4 +72,5 @@ router
       ],
       categoryController.handleDeleteCategory
    )
+
 export default router

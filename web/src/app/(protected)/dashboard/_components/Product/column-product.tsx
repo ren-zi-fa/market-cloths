@@ -1,14 +1,16 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import CellAction from './cell-action-category'
+
 import { Button } from '@/components/ui/button'
 import { ArrowUpDown } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Category } from '@/types'
+import CellAction from './cell-action-product'
+import { Iproduct } from '@/types'
 
-export type CategoryColumn = Category
-export const columns: ColumnDef<CategoryColumn>[] = [
+export type ProductColumn = Iproduct
+
+export const columns: ColumnDef<ProductColumn>[] = [
    {
       id: 'select',
       header: ({ table }) => (

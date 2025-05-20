@@ -28,11 +28,11 @@ import { useCategoryStore } from '@/hooks/category-store'
 
 type CategorySchema = z.infer<typeof category_schema>
 
-type FormEditCategoryProps = {
+type FormEditProduct = {
    id: string
 }
 
-export default function FormEditCategory({ id }: FormEditCategoryProps) {
+export default function FormEditProduct({ id }: FormEditProduct) {
    const [loading, setLoading] = useState(false)
    const [open, setOpen] = useState(false)
    const form = useForm<CategorySchema>({
