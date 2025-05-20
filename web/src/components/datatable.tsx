@@ -1,5 +1,6 @@
 'use client'
 
+
 import * as React from 'react'
 import {
    ColumnDef,
@@ -13,10 +14,10 @@ import {
    getSortedRowModel,
    useReactTable
 } from '@tanstack/react-table'
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react'
+import {  ChevronDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+
 import {
    DropdownMenu,
    DropdownMenuCheckboxItem,
@@ -35,13 +36,8 @@ import {
 import instance from '@/lib/axios'
 import { toast } from 'sonner'
 import axios from 'axios'
-import {
-   Dialog,
-   DialogContent,
-   DialogFooter,
-   DialogHeader,
-   DialogTitle
-} from './ui/dialog'
+
+import AlertModal from './modals/AlertModal'
 
 interface DataTableProps<TData extends { id: string | number }, TValue> {
    columns: ColumnDef<TData, TValue>[]
@@ -134,6 +130,7 @@ export function DataTable<TData extends { id: string | number }, TValue>({
                }
                className="max-w-sm"
             />
+
             <DropdownMenu>
                <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="ml-auto">
@@ -235,32 +232,12 @@ export function DataTable<TData extends { id: string | number }, TValue>({
                </Button>
             </div>
          </div>
-         <Dialog open={openDelete} onOpenChange={setOpenDelete}>
-            <DialogContent>
-               <DialogHeader>
-                  <DialogTitle>Konfirmasi Hapus</DialogTitle>
-               </DialogHeader>
-               <div>
-                  Apakah Anda yakin ingin menghapus kategori berikut?
-                  <ul className="mt-2 list-disc ml-6 text-sm text-muted-foreground">
-                     {selectedIds.map((id) => (
-                        <li key={id}>{id}</li>
-                     ))}
-                  </ul>
-               </div>
-               <DialogFooter>
-                  <Button
-                     variant="outline"
-                     onClick={() => setOpenDelete(false)}
-                  >
-                     Batal
-                  </Button>
-                  <Button variant="destructive" onClick={handleBulkDelete}>
-                     Lanjutkan
-                  </Button>
-               </DialogFooter>
-            </DialogContent>
-         </Dialog>
+         <AlertModal
+            handleBulkDelete={handleBulkDelete}
+            setOpenDelete={setOpenDelete}
+            openDelete={openDelete}
+            selectedIds={selectedIds}
+         />
       </div>
    )
 }

@@ -1,9 +1,7 @@
 import { Router } from 'express'
 
 import { param, body } from 'express-validator'
-import {
-   categoryValidation,
-} from '../validation/product.validation'
+import { categoryValidation } from '../validation/product.validation'
 import { categoryController } from '../controller'
 const router = Router()
 /**
@@ -32,6 +30,16 @@ router
 
 router
    .route('/categories/:id')
+   .get(
+      [
+         param('id')
+            .isString()
+            .trim()
+            .notEmpty()
+            .withMessage('ID tidak boleh kosong dan harus berupa string')
+      ],
+      categoryController.handleGetCategoryId
+   )
    .put(
       [
          param('id')

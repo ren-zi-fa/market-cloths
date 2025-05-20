@@ -1,19 +1,19 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import CellAction from './cell-action'
+import CellAction from './cell-action-category'
 import { Button } from '@/components/ui/button'
 import { ArrowUpDown } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 
 
-export type BillboardColumn = {
+export type CategoryColumn = {
    id: string
    name: string
    description: string
 }
 
-export const columns: ColumnDef<BillboardColumn>[] = [
+export const columns: ColumnDef<CategoryColumn>[] = [
    {
       id: 'select',
       header: ({ table }) => (

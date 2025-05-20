@@ -1,3 +1,4 @@
+'use client'
 import { Button } from '@/components/ui/button'
 import {
    Dialog,
@@ -27,11 +28,10 @@ import axios from 'axios'
 
 type CategorySchema = z.infer<typeof category_schema>
 
-type FormCategoryProps = {
-   onSuccess?: () => void
+interface FormProps {
+   onSucces: () => void
 }
-
-export default function FormCategory({ onSuccess }: FormCategoryProps) {
+export default function FormCategory({ onSucces }: FormProps) {
    const [loading, setLoading] = useState(false)
 
    const form = useForm<CategorySchema>({
@@ -42,6 +42,7 @@ export default function FormCategory({ onSuccess }: FormCategoryProps) {
       }
    })
 
+
    const onSubmit = async (values: CategorySchema) => {
       setLoading(true)
       try {
@@ -49,7 +50,7 @@ export default function FormCategory({ onSuccess }: FormCategoryProps) {
          if (res.status === 201 || res.status === 200) {
             form.reset()
             toast.success('Kategori berhasil disimpan!')
-            if (onSuccess) onSuccess() // Panggil fetch dari parent
+            onSucces()
          } else {
             toast.error('Gagal menyimpan kategori.')
          }

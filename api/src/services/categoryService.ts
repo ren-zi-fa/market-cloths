@@ -1,5 +1,5 @@
 import { db } from '../config/firebase'
-import { Category, Product } from '../types'
+import { Category } from '../types'
 
 export async function createCategory({
    name,
@@ -72,4 +72,16 @@ export async function updateCategoryById(
 
    await docRef.update(data)
    return true
+}
+
+export async function getCategoryById(id: string): Promise<Category | null> {
+   const docRef = db.collection('category').doc(id)
+   const doc = await docRef.get()
+   if (!doc.exists) {
+      return null
+   }
+   return {
+      id: doc.id,
+      ...doc.data()
+   } as Category
 }

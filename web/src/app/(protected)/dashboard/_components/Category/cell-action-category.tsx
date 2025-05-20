@@ -1,6 +1,5 @@
 'use client'
-import React, { useState } from 'react'
-import { ColumnDef } from '@tanstack/react-table'
+import React from 'react'
 import { MoreHorizontal } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -12,24 +11,18 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { BillboardColumn } from './column'
-import { useParams, useRouter } from 'next/navigation'
+import { CategoryColumn } from './column-category'
 import { toast } from 'sonner'
-import AlertModal from '@/components/modals/alert-modal'
-import instance from '@/lib/axios'
+import FormEditCategory from './FormEditCategory'
 
 interface CellActionProps {
-   data: BillboardColumn
+   data: CategoryColumn
 }
 
 const CellAction = ({ data }: CellActionProps) => {
-   const router = useRouter()
-   const params = useParams()
-
-
-   const onCopy = (id: string) => {
+   const onCopy = () => {
       navigator.clipboard.writeText(data.id)
-      toast.success('Billboard Copied Successfully')
+      toast.success('Category Copied Successfully')
    }
    return (
       <>
@@ -42,18 +35,11 @@ const CellAction = ({ data }: CellActionProps) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-               <DropdownMenuItem onClick={() => onCopy(data.id)}>
-                  Copy Data ID
+               <DropdownMenuItem onClick={() => onCopy()}>
+                  Copy ID
                </DropdownMenuItem>
                <DropdownMenuSeparator />
-               <DropdownMenuItem
-                  onClick={() =>
-                     router.push(`/${params.storeId}/billboards/${data.id}`)
-                  }
-               >
-                  Update
-               </DropdownMenuItem>
-           
+               <FormEditCategory id={data.id} />
             </DropdownMenuContent>
          </DropdownMenu>
       </>
