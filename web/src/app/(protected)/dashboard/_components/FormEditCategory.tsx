@@ -31,7 +31,7 @@ type FormCategoryProps = {
    onSuccess?: () => void
 }
 
-export default function FormCategory({ onSuccess }: FormCategoryProps) {
+export default function FormEditCategory({ onSuccess }: FormCategoryProps) {
    const [loading, setLoading] = useState(false)
 
    const form = useForm<CategorySchema>({
