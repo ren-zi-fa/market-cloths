@@ -31,9 +31,8 @@ type FormCategoryProps = {
    onSuccess?: () => void
 }
 
-export default function FormCategory({ onSuccess }: FormCategoryProps) {
+export default function FormEditCategory({ onSuccess }: FormCategoryProps) {
    const [loading, setLoading] = useState(false)
-   const [open, setOpen] = useState(false)
 
    const form = useForm<CategorySchema>({
       resolver: zodResolver(category_schema),
@@ -50,8 +49,7 @@ export default function FormCategory({ onSuccess }: FormCategoryProps) {
          if (res.status === 201 || res.status === 200) {
             form.reset()
             toast.success('Kategori berhasil disimpan!')
-            setOpen(false)
-            if (onSuccess) onSuccess()
+            if (onSuccess) onSuccess() // Panggil fetch dari parent
          } else {
             toast.error('Gagal menyimpan kategori.')
          }
@@ -66,7 +64,7 @@ export default function FormCategory({ onSuccess }: FormCategoryProps) {
    }
 
    return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog>
          <DialogTrigger asChild>
             <Button size="lg" className="flex items-center gap-2">
                <Plus size={20} />
@@ -94,7 +92,6 @@ export default function FormCategory({ onSuccess }: FormCategoryProps) {
                               <Input
                                  placeholder="Masukkan nama kategori"
                                  {...field}
-                                 disabled={loading}
                               />
                            </FormControl>
                            <FormMessage />
@@ -115,7 +112,6 @@ export default function FormCategory({ onSuccess }: FormCategoryProps) {
                                  placeholder="Masukkan deskripsi kategori (opsional)"
                                  className="min-h-[100px]"
                                  {...field}
-                                 disabled={loading}
                               />
                            </FormControl>
                            <FormMessage />
