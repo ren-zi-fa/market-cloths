@@ -31,6 +31,13 @@ import { authController } from '../controller'
  *       401:
  *         description: Login gagal
  */
+const router = Router()
+router.post(
+   '/login',
+   ensureEmailOrUsername,
+   loginValidation,
+   authController.handleLogin
+)
 
 /**
  * @swagger
@@ -50,6 +57,7 @@ import { authController } from '../controller'
  *       400:
  *         description: Registrasi gagal
  */
+router.post('/register', registerValidation, authController.handleRegister)
 
 /**
  * @swagger
@@ -61,6 +69,7 @@ import { authController } from '../controller'
  *       200:
  *         description: Logout berhasil
  */
+router.post('/logout', authController.handleLogout)
 
 /**
  * @swagger
@@ -72,6 +81,7 @@ import { authController } from '../controller'
  *       200:
  *         description: Token berhasil diperbarui
  */
+router.post('/refresh-token', authController.handleRefreshToken)
 
 /**
  * @swagger
@@ -87,6 +97,7 @@ import { authController } from '../controller'
  *             schema:
  *               $ref: '#/components/schemas/User'
  */
+router.get('/profile', authController.hadnleProfile)
 
 /**
  * @swagger
@@ -118,19 +129,5 @@ import { authController } from '../controller'
  *         username:
  *           type: string
  */
-
-const router = Router()
-router.post(
-   '/login',
-   ensureEmailOrUsername,
-   loginValidation,
-   authController.handleLogin
-)
-
-// Register route
-router.post('/register', registerValidation, authController.handleRegister)
-router.post('/logout', authController.handleLogout)
-router.post('/refresh-token', authController.handleRefreshToken)
-router.get('/profile', authController.hadnleProfile)
 
 export default router

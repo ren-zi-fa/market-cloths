@@ -44,6 +44,10 @@ const router = Router()
  *             schema:
  *               $ref: '#/components/schemas/Category'
  */
+router
+   .route('/categories')
+   .get(categoryController.handleGetCategories)
+   .post(categoryValidation, categoryController.handleCreateCategory)
 
 /**
  * @swagger
@@ -66,6 +70,20 @@ const router = Router()
  *       200:
  *         description: Kategori berhasil dihapus
  */
+router
+   .route('/categories/bulk-delete')
+   .delete(
+      [
+         body('ids')
+            .isArray({ min: 1 })
+            .withMessage('ids harus berupa array yang tidak kosong'),
+         body('ids.*')
+            .isString()
+            .notEmpty()
+            .withMessage('Setiap id harus berupa string yang tidak kosong')
+      ],
+      categoryController.handleBulkDeleteCategory
+   )
 
 /**
  * @swagger
@@ -120,53 +138,6 @@ const router = Router()
  *       200:
  *         description: Kategori berhasil dihapus
  */
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     Category:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         name:
- *           type: string
- *         description:
- *           type: string
- *     CategoryInput:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *         description:
- *           type: string
- */
-
-/**
- *
- *
- */
-router
-   .route('/categories')
-   .get(categoryController.handleGetCategories)
-   .post(categoryValidation, categoryController.handleCreateCategory)
-
-router
-   .route('/categories/bulk-delete')
-   .delete(
-      [
-         body('ids')
-            .isArray({ min: 1 })
-            .withMessage('ids harus berupa array yang tidak kosong'),
-         body('ids.*')
-            .isString()
-            .notEmpty()
-            .withMessage('Setiap id harus berupa string yang tidak kosong')
-      ],
-      categoryController.handleBulkDeleteCategory
-   )
-
 router
    .route('/categories/:id')
    .get(
@@ -211,5 +182,27 @@ router
       ],
       categoryController.handleDeleteCategory
    )
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Category:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         name:
+ *           type: string
+ *         description:
+ *           type: string
+ *     CategoryInput:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *         description:
+ *           type: string
+ */
 
 export default router

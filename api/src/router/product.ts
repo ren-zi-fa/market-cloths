@@ -7,55 +7,57 @@ import { productController } from '../controller'
 const router = Router()
 
 /**
- * @openapi
- * /products:
+ * @swagger
+ * tags:
+ *   - name: Products
+ *     description: Endpoint untuk produk
+ */
+
+/**
+ * @swagger
+ * /api/products:
  *   post:
  *     summary: Membuat produk baru
- *     tags:
- *       - Products
+ *     tags: [Products]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: "T-shirt"
- *               price:
- *                 type: integer
- *                 example: 100000
- *               stok:
- *                 type: integer
- *                 example: 10
- *               description:
- *                 type: string
- *                 example: "Produk berkualitas"
- *               image_url:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: url
- *                 example: ["https://res.cloudinary.com/xxx/image.png"]
- *               category_name:
- *                 type: string
- *                 example: "Kaos"
+ *             $ref: '#/components/schemas/ProductInput'
  *     responses:
  *       201:
  *         description: Produk berhasil dibuat
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
  *       400:
  *         description: Validasi gagal
  *   get:
- *     summary: Mendapatkan semua produk
- *     tags:
- *       - Products
+ *     summary: Mendapatkan daftar produk
+ *     tags: [Products]
  *     parameters:
  *       - in: query
- *         name: new
+ *         name: category
  *         schema:
- *           type: boolean
- *         description: Jika true, ambil produk terbaru (limit 8)
+ *           type: string
+ *         description: Filter produk berdasarkan kategori
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Jumlah maksimum produk yang ditampilkan per halaman
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Nomor halaman untuk paginasi
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Pencarian produk berdasarkan nama atau deskripsi
  *     responses:
  *       200:
  *         description: Daftar produk
@@ -66,18 +68,43 @@ const router = Router()
  *               properties:
  *                 success:
  *                   type: boolean
- *                 message:
- *                   type: string
+ *                   example: true
  *                 data:
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Product'
- *
- * /products/bulk-delete:
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     limit:
+ *                       type: integer
+ *                       example: 10
+ *       400:
+ *         description: Validasi parameter query gagal
+ */
+
+router
+   .route('/products')
+   .post(productValidation, productController.handleCreateProduct)
+   .get(
+      [
+         query('category').optional().isString().trim(),
+         query('limit').optional().isInt(),
+         query('page').optional().isInt(),
+         query('search').optional().isString().trim()
+      ],
+      productController.handleGetProducts
+   )
+
+/**
+ * @swagger
+ * /api/products/bulk-delete:
  *   delete:
  *     summary: Menghapus banyak produk sekaligus
- *     tags:
- *       - Products
+ *     tags: [Products]
  *     requestBody:
  *       required: true
  *       content:
@@ -95,12 +122,28 @@ const router = Router()
  *         description: Produk berhasil dihapus
  *       400:
  *         description: Validasi gagal
- *
- * /products/{id}:
+ */
+router
+   .route('/products/bulk-delete')
+   .delete(
+      [
+         body('ids')
+            .isArray({ min: 1 })
+            .withMessage('ids harus berupa array yang tidak kosong'),
+         body('ids.*')
+            .isString()
+            .notEmpty()
+            .withMessage('Setiap id harus berupa string yang tidak kosong')
+      ],
+      productController.handleBulkDeleteProducts
+   )
+
+/**
+ * @swagger
+ * /api/products/{id}:
  *   get:
  *     summary: Mendapatkan detail produk berdasarkan ID
- *     tags:
- *       - Products
+ *     tags: [Products]
  *     parameters:
  *       - in: path
  *         name: id
@@ -119,8 +162,7 @@ const router = Router()
  *         description: Produk tidak ditemukan
  *   put:
  *     summary: Memperbarui data produk berdasarkan ID
- *     tags:
- *       - Products
+ *     tags: [Products]
  *     parameters:
  *       - in: path
  *         name: id
@@ -133,34 +175,21 @@ const router = Router()
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               price:
- *                 type: integer
- *               stok:
- *                 type: integer
- *               description:
- *                 type: string
- *               image_url:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: url
- *               category_name:
- *                 type: string
+ *             $ref: '#/components/schemas/ProductInput'
  *     responses:
  *       200:
  *         description: Produk berhasil diupdate
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
  *       400:
  *         description: Validasi gagal
  *       404:
  *         description: Produk tidak ditemukan
  *   delete:
  *     summary: Menghapus produk berdasarkan ID
- *     tags:
- *       - Products
+ *     tags: [Products]
  *     parameters:
  *       - in: path
  *         name: id
@@ -173,55 +202,7 @@ const router = Router()
  *         description: Produk berhasil dihapus
  *       404:
  *         description: Produk tidak ditemukan
- *
- * components:
- *   schemas:
- *     Product:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         name:
- *           type: string
- *         price:
- *           type: integer
- *         stok:
- *           type: integer
- *         description:
- *           type: string
- *         image_url:
- *           type: array
- *           items:
- *             type: string
- *             format: url
- *         category_name:
- *           type: string
- *         createdAt:
- *           type: string
- *           format: date-time
  */
-router
-   .route('/products')
-   .post(productValidation, productController.handleCreateProduct)
-   .get(
-      [query('new').optional().isBoolean().toBoolean()],
-      productController.handleGetProducts
-   )
-router
-   .route('/products/bulk-delete')
-
-   .delete(
-      [
-         body('ids')
-            .isArray({ min: 1 })
-            .withMessage('ids harus berupa array yang tidak kosong'),
-         body('ids.*')
-            .isString()
-            .notEmpty()
-            .withMessage('Setiap id harus berupa string yang tidak kosong')
-      ],
-      productController.handleBulkDeleteProducts
-   )
 router
    .route('/products/:id')
    .get(
@@ -283,5 +264,66 @@ router
       ],
       productController.handleDeleteproduct
    )
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "664a1b2c3d4e5f6a7b8c9d0e"
+ *         name:
+ *           type: string
+ *           example: "T-shirt"
+ *         price:
+ *           type: integer
+ *           example: 100000
+ *         stok:
+ *           type: integer
+ *           example: 10
+ *         description:
+ *           type: string
+ *           example: "Produk berkualitas"
+ *         image_url:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: url
+ *           example: ["https://res.cloudinary.com/xxx/image.png"]
+ *         category_name:
+ *           type: string
+ *           example: "Kaos"
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           example: "2024-05-20T12:34:56.789Z"
+ *     ProductInput:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: "T-shirt"
+ *         price:
+ *           type: integer
+ *           example: 100000
+ *         stok:
+ *           type: integer
+ *           example: 10
+ *         description:
+ *           type: string
+ *           example: "Produk berkualitas"
+ *         image_url:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: url
+ *           example: ["https://res.cloudinary.com/xxx/image.png"]
+ *         category_name:
+ *           type: string
+ *           example: "Kaos"
+ */
 
 export default router

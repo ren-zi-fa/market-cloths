@@ -19,17 +19,42 @@ const handleGetProducts = async (req: Request, res: Response) => {
       }
 
       const data = matchedData(req, { locations: ['query'] })
-      const isNew = data.new as boolean
 
-      const products = await fetchProducts(isNew)
-      res.json({ success: true, data: products })
+      const category = data.category as string | undefined
+      const search = data.search as string | undefined // Tambahkan ini
+
+      // Pagination params, default page 1, limit 10
+      const page = data.page ? Number(data.page) : 1
+      const limit = data.limit ? Number(data.limit) : 10
+
+      // Batasi limit maksimal 50 untuk keamanan
+      const safeLimit = limit > 50 ? 50 : limit
+
+      const {
+         data: products,
+         totalItems,
+         totalPages
+      } = await fetchProducts(category, safeLimit, page, search)
+
+      res.json({
+         success: true,
+         data: products,
+         pagination: {
+            page,
+            limit: safeLimit,
+            totalItems,
+            totalPages
+         }
+      })
    } catch (error) {
+      console.error('Fetch products error:', error)
       res.status(500).json({
          success: false,
-         error: 'Failed to fetch products'
+         error: error instanceof Error ? error.message : String(error)
       })
    }
 }
+
 const handleGetProductById = async (req: Request, res: Response) => {
    const errors = validationResult(req)
    if (!errors.isEmpty()) {
@@ -74,14 +99,7 @@ const handleCreateProduct = async (req: Request, res: Response) => {
    }
 
    const data = matchedData(req)
-   const {
-      name,
-      image_url,
-      price,
-      stok,
-      description,
-      category_name
-   } = data
+   const { name, image_url, price, stok, description, category_name } = data
    try {
       const productData = {
          name,

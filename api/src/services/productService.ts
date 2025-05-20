@@ -6,21 +6,48 @@ export const createProduct = async (productData: Product) => {
    return docRef.id
 }
 
-export async function fetchProducts(isNew?: boolean) {
-   const productsRef = db.collection('product').orderBy('createdAt', 'desc')
+export async function fetchProducts(
+   category?: string,
+   limit: number = 10,
+   page: number = 1,
+   search?: string
+) {
+   let queryRef = db.collection('product').orderBy('createdAt', 'desc')
 
-   let queryRef = productsRef
-
-   if (isNew === true) {
-      queryRef = queryRef.limit(8) // ambil 5 produk terbaru
-   } else if (isNew === false) {
-      queryRef = queryRef.limit(10) // ambil 10 produk terbaru
+   if (category) {
+      queryRef = queryRef.where('category_name', '==', category)
    }
-   // jika isNew undefined ambil semua produk tanpa limit
 
    const snapshot = await queryRef.get()
 
-   return snapshot.docs.map((doc) => {
+   let docs = snapshot.docs
+
+   if (search) {
+      const searchLower = search.toLowerCase()
+      docs = docs.filter((doc) => {
+         const data = doc.data()
+         const name = (data.name || '').toString().toLowerCase()
+         const description = (data.description || '').toString().toLowerCase()
+         const price = data.price !== undefined ? String(data.price) : ''
+         const category_name = (data.category_name || '')
+            .toString()
+            .toLowerCase()
+         return (
+            name.includes(searchLower) ||
+            description.includes(searchLower) ||
+            category_name.includes(searchLower) ||
+            price.includes(searchLower)
+         )
+      })
+   }
+
+   const totalItems = docs.length
+   const totalPages = Math.ceil(totalItems / limit)
+
+   const offset = (page - 1) * limit
+   const pagedDocs = docs.slice(offset, offset + limit)
+
+   const data = pagedDocs.map((doc) => {
       const data = doc.data()
       return {
          id: doc.id,
@@ -31,6 +58,12 @@ export async function fetchProducts(isNew?: boolean) {
                : data.createdAt
       }
    })
+
+   return {
+      data,
+      totalItems,
+      totalPages
+   }
 }
 
 export async function deleteProductByid(id: string): Promise<boolean> {
