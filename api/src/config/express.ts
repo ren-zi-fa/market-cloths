@@ -2,9 +2,11 @@ import path from 'path'
 import express from 'express'
 import { router } from '../router'
 import cors from 'cors'
+import swaggerUi from 'swagger-ui-express'
 import cookieParser from 'cookie-parser'
 import { notFoundMiddleware } from '../middlewares/notFoundMiddleware'
 import { errorMiddleware } from '../middlewares/errorMiddleware'
+import { swaggerSpec } from '../swagger/swagger'
 const app = express()
 
 app.use('/images', express.static(path.join(__dirname, '../../public/images')))
@@ -22,6 +24,7 @@ app.get('/', (req, res) => {
    res.json({ message: 'api is ok' })
 })
 app.use('/api', router)
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 // Not found & error handler harus di bawah semua route
 app.use(notFoundMiddleware)
