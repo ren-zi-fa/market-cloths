@@ -3,23 +3,35 @@
 import { DataTable } from '@/components/datatable'
 
 import React, { useEffect, useState } from 'react'
-import {  columns } from './column'
+import { columns } from './column'
 import instance from '@/lib/axios'
+import { Category } from '@/types'
 
 const BillboardClient = () => {
-   const [data, setData] = useState([])
+   const [data, setData] = useState<Category[]>([])
 
-   useEffect(() => {
+   const fetchData = () => {
       instance
          .get('/api/categories')
          .then((res) => setData(res.data.data))
          .catch((e) => console.log(e))
+   }
+
+   useEffect(() => {
+      fetchData()
    }, [])
-   console.log(data)
 
    return (
       <>
-         <DataTable searchkey="name" data={data} columns={columns} />
+         {data && (
+            <DataTable
+               searchkey="name"
+               deleteBulkEndpoint="/api/categories/bulk-delete"
+               data={data}
+               columns={columns}
+               onRefresh={fetchData}
+            />
+         )}
       </>
    )
 }

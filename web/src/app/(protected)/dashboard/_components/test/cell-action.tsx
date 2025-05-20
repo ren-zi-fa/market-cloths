@@ -23,37 +23,16 @@ interface CellActionProps {
 }
 
 const CellAction = ({ data }: CellActionProps) => {
-   const [open, setOpen] = useState(false)
-   const [loading, setLoading] = useState(false)
-
    const router = useRouter()
    const params = useParams()
 
-   const onDelete = async () => {
-      try {
-         setLoading(true)
-         await instance.delete(`/api/categories/${data.id}`)
-         toast.success('Billboard deleted')
-         router.refresh()
-      } catch (error) {
-         toast.error('Something went wrong')
-      } finally {
-         setLoading(false)
-         setOpen(false)
-      }
-   }
+
    const onCopy = (id: string) => {
       navigator.clipboard.writeText(data.id)
       toast.success('Billboard Copied Successfully')
    }
    return (
       <>
-         <AlertModal
-            isOpen={open}
-            onClose={() => setOpen(false)}
-            onConfirm={onDelete}
-            loading={loading}
-         />
          <DropdownMenu>
             <DropdownMenuTrigger asChild>
                <Button variant="ghost" className="h-8 w-8 p-0">
@@ -74,9 +53,7 @@ const CellAction = ({ data }: CellActionProps) => {
                >
                   Update
                </DropdownMenuItem>
-               <DropdownMenuItem onClick={() => setOpen(true)}>
-                  Delete
-               </DropdownMenuItem>
+           
             </DropdownMenuContent>
          </DropdownMenu>
       </>
