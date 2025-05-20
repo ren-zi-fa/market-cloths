@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import FormProduct from '../_components/Product/FormProduct'
+import DataProduct from '../_components/Product/DataProduct'
 
 export const metadata: Metadata = {
    title: 'Manage Products',
@@ -7,9 +7,11 @@ export const metadata: Metadata = {
 }
 export default function page() {
    return (
-      <div className="mt-10 space-y-5">
-         <h1 className='text-center font-bold text-3xl'>Create Product</h1>
-         {/* <FormProduct /> */}
+      <div className="container max-w-6xl mx-auto space-y-5">
+         <h1 className="text-center text-xl font-bold ">
+            Products Managament
+         </h1>
+         <DataProduct />
       </div>
    )
 }

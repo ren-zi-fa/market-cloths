@@ -8,7 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Category } from '@/types'
 
 export type CategoryColumn = Category
-export const columns: ColumnDef<CategoryColumn>[] = [
+export const columnCategory: ColumnDef<CategoryColumn>[] = [
    {
       id: 'select',
       header: ({ table }) => (

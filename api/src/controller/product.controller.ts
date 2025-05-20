@@ -80,14 +80,12 @@ const handleCreateProduct = async (req: Request, res: Response) => {
       price,
       stok,
       description,
-      categoryId,
-      categoryName
+      category_name
    } = data
    try {
       const productData = {
          name,
-         categoryId,
-         categoryName,
+         category_name,
          price,
          stok,
          description,

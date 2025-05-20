@@ -7,10 +7,11 @@ import { ArrowUpDown } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import CellAction from './cell-action-product'
 import { Iproduct } from '@/types'
+import Image from 'next/image'
 
 export type ProductColumn = Iproduct
 
-export const columns: ColumnDef<ProductColumn>[] = [
+export const columnProduct: ColumnDef<ProductColumn>[] = [
    {
       id: 'select',
       header: ({ table }) => (
@@ -35,6 +36,26 @@ export const columns: ColumnDef<ProductColumn>[] = [
       enableSorting: false,
       enableHiding: false
    },
+   {
+      header: 'Gambar',
+      accessorFn: (row) => row.image_url?.[0] || '',
+      cell: (info) => {
+         const url = info.getValue() as string
+         return url ? (
+            <div className="relative h-12 w-12">
+               <Image
+                  src={url}
+                  alt="gambar"
+                  fill
+                  sizes="48px"
+                  className="object-cover rounded"
+                  style={{ objectFit: 'cover', borderRadius: '0.375rem' }}
+                  loading="lazy"
+               />
+            </div>
+         ) : null
+      }
+   },
 
    {
       accessorKey: 'name',
@@ -49,8 +70,25 @@ export const columns: ColumnDef<ProductColumn>[] = [
       cell: (info) => info.getValue()
    },
    {
-      accessorKey: 'description',
-      header: 'Deskripsi',
+      accessorKey: 'category_name',
+      header: ({ column }) => (
+         <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+         >
+            Category <ArrowUpDown className="ml-1 inline" />
+         </Button>
+      ),
+      cell: (info) => info.getValue()
+   },
+   {
+      accessorKey: 'price',
+      header: 'Price',
+      cell: (info) => info.getValue()
+   },
+   {
+      accessorKey: 'stok',
+      header: 'Stok',
       cell: (info) => info.getValue()
    },
    {

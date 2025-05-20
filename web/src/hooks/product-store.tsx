@@ -1,18 +1,18 @@
 import { create } from 'zustand'
 import instance from '@/lib/axios'
-import { Category } from '@/types'
+import {  Iproduct } from '@/types'
 import { useEffect, useState } from 'react'
 
-interface CategoryState {
-   data: Category[]
+interface ProductState {
+   data: Iproduct[]
    fetchData: () => Promise<void>
 }
 
-export const useCategoryStore = create<CategoryState>((set) => ({
+export const useProductStore = create<ProductState>((set) => ({
    data: [],
    fetchData: async () => {
       try {
-         const res = await instance.get('/api/categories')
+         const res = await instance.get('/api/products')
          set({ data: res.data.data })
       } catch (e) {
          console.log(e)
@@ -20,8 +20,8 @@ export const useCategoryStore = create<CategoryState>((set) => ({
    }
 }))
 
-export function useCategoryById(id: string | undefined) {
-   const [category, setCategory] = useState<Category | null>(null)
+export function useProductById(id: string | undefined) {
+   const [product, setProduct] = useState<Iproduct | null>(null)
    const [loading, setLoading] = useState(false)
    const [error, setError] = useState<string | null>(null)
 
@@ -30,11 +30,11 @@ export function useCategoryById(id: string | undefined) {
       setLoading(true)
       setError(null)
       instance
-         .get(`/api/categories/${id}`)
-         .then((res) => setCategory(res.data.data))
-         .catch((err) => setError(`Gagal mengambil kategori ${err} `))
+         .get(`/api/products/${id}`)
+         .then((res) => setProduct(res.data.data))
+         .catch((err) => setError(`Gagal mengambil product ${err}`))
          .finally(() => setLoading(false))
    }, [id])
 
-   return { category, loading, error }
+   return { product, loading, error }
 }

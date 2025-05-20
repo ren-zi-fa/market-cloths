@@ -46,12 +46,7 @@ const productSchema: FieldSchema = {
          errorMessage: 'Gambar produk wajib diisi dan berupa array'
       }
    },
-   categoryId: {
-      in: ['body'],
-      notEmpty: { errorMessage: 'ID kategori wajib diisi' },
-      isString: { errorMessage: 'ID kategori harus berupa string' }
-   },
-   categoryName: {
+   category_name: {
       in: ['body'],
       notEmpty: { errorMessage: 'Nama kategori wajib diisi' },
       isString: { errorMessage: 'Nama kategori harus berupa string' }

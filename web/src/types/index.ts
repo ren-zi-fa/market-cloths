@@ -6,6 +6,7 @@ interface Iproduct {
    image_url: string[]
    createdAt: string
    description: string
+   category_name: string
 }
 interface User {
    userId: string

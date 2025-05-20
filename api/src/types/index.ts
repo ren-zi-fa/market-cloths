@@ -23,8 +23,7 @@ interface Product {
    price: number
    stok: number
    image_url: string[]
-   categoryId: string
-   categoryName: string
+   category_name: string
    createdAt: Date
 }
 
