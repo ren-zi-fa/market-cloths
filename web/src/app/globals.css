@@ -119,16 +119,16 @@
    * {
       @apply border-border outline-ring/50;
       ::-webkit-scrollbar {
-         width: 12px;
+         width: 10px;
          height: 8px;
       }
 
       ::-webkit-scrollbar-track {
-         background: #f1f1f1;
+         background: #d9c4c4;
       }
 
       ::-webkit-scrollbar-thumb {
-         background: #ffe4e6;
+         background: #6b5c5d;
          border-radius: 4px;
       }
 

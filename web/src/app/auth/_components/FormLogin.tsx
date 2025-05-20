@@ -19,6 +19,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import instance from '@/lib/axios'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 type LoginInput = z.infer<typeof LoginSchema>
 
@@ -57,7 +58,7 @@ export default function FormLogin() {
 
    useEffect(() => {
       if (loginError) {
-         alert(loginError)
+         toast.error(loginError)
       }
    }, [loginError])
 

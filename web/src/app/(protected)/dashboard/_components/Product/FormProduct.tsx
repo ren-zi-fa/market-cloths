@@ -90,7 +90,7 @@ export default function FormProduct({ onSucces }: FormProps) {
          <DialogTrigger asChild>
             <Button variant="outline">Tambah Produk</Button>
          </DialogTrigger>
-         <DialogContent>
+         <DialogContent className="overflow-auto max-h-[80vh]">
             <DialogHeader>
                <DialogTitle>Tambah Produk Baru</DialogTitle>
                <DialogDescription>
@@ -121,27 +121,24 @@ export default function FormProduct({ onSucces }: FormProps) {
                      render={({ field }) => (
                         <FormItem>
                            <FormLabel>Category</FormLabel>
-                           <FormControl>
-                              <Select
-                                 value={field.value}
-                                 onValueChange={field.onChange}
-                                 disabled={loading}
-                              >
+                           <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                              disabled={loading}
+                           >
+                              <FormControl>
                                  <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Pilih kategori" />
                                  </SelectTrigger>
-                                 <SelectContent>
-                                    {category?.map((cat: { name: string }) => (
-                                       <SelectItem
-                                          key={cat.name}
-                                          value={cat.name}
-                                       >
-                                          {cat.name}
-                                       </SelectItem>
-                                    ))}
-                                 </SelectContent>
-                              </Select>
-                           </FormControl>
+                              </FormControl>
+                              <SelectContent>
+                                 {category?.map((cat: { name: string }) => (
+                                    <SelectItem key={cat.name} value={cat.name}>
+                                       {cat.name}
+                                    </SelectItem>
+                                 ))}
+                              </SelectContent>
+                           </Select>
                            <FormMessage />
                         </FormItem>
                      )}
@@ -261,7 +258,24 @@ export default function FormProduct({ onSucces }: FormProps) {
                                  </Button>
                               </div>
                            </FormControl>
-                           <FormMessage />
+                           {form.formState.errors.image_url?.message && (
+                              <FormMessage>
+                                 {form.formState.errors.image_url.message}
+                              </FormMessage>
+                           )}
+
+                           {form.formState.errors.image_url &&
+                              Array.isArray(form.formState.errors.image_url) &&
+                              form.formState.errors.image_url.map((err, idx) =>
+                                 err && 'message' in err ? (
+                                    <p
+                                       key={idx}
+                                       className="text-sm text-red-500"
+                                    >
+                                       Gambar #{idx + 1}: {err.message}
+                                    </p>
+                                 ) : null
+                              )}
                         </FormItem>
                      )}
                   />

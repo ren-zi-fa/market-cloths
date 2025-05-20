@@ -4,9 +4,10 @@ import {
    Dialog,
    DialogContent,
    DialogTrigger,
-   DialogTitle
+   DialogTitle,
+   DialogHeader,
+   DialogDescription
 } from '@/components/ui/dialog'
-import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -41,7 +42,7 @@ export default function FormCategory({ onSucces }: FormProps) {
          description: ''
       }
    })
-
+   console.log(form.formState.errors)
 
    const onSubmit = async (values: CategorySchema) => {
       setLoading(true)
@@ -67,15 +68,15 @@ export default function FormCategory({ onSucces }: FormProps) {
    return (
       <Dialog>
          <DialogTrigger asChild>
-            <Button size="lg" className="flex items-center gap-2">
-               <Plus size={20} />
-               Tambah Kategori
-            </Button>
+            <Button variant="outline">Tambah Category</Button>
          </DialogTrigger>
          <DialogContent className="sm:max-w-[500px] rounded-xl p-6">
-            <DialogTitle className="text-2xl font-semibold mb-4">
-               Tambah Kategori Baru
-            </DialogTitle>
+            <DialogHeader>
+               <DialogTitle>Tambah kategori Baru</DialogTitle>
+               <DialogDescription>
+                  Isi data kategori di bawah ini.
+               </DialogDescription>
+            </DialogHeader>
             <Form {...form}>
                <form
                   onSubmit={form.handleSubmit(onSubmit)}

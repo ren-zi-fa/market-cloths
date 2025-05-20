@@ -4,7 +4,8 @@ import {
    Dialog,
    DialogContent,
    DialogTrigger,
-   DialogTitle
+   DialogTitle,
+   DialogHeader
 } from '@/components/ui/dialog'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -25,6 +26,7 @@ import { toast } from 'sonner'
 import instance from '@/lib/axios'
 import axios from 'axios'
 import { useCategoryStore } from '@/hooks/category-store'
+import { DialogDescription } from '@radix-ui/react-dialog'
 
 type CategorySchema = z.infer<typeof category_schema>
 
@@ -81,11 +83,16 @@ export default function FormEditCategory({ id }: FormEditCategoryProps) {
 
    return (
       <Dialog open={open} onOpenChange={setOpen}>
-         <DialogTrigger className='hover:bg-gray-500/5 w-full text-blue-600'> Edit </DialogTrigger>
-         <DialogContent className="sm:max-w-[500px] rounded-xl p-6">
-            <DialogTitle className="text-2xl font-semibold mb-4">
-               Edit Kategori
-            </DialogTitle>
+         <DialogTrigger asChild>
+            <Button variant="outline">Edit kategori</Button>
+         </DialogTrigger>
+         <DialogContent className="overflow-auto max-h-[80vh]">
+            <DialogHeader>
+               <DialogTitle>Edit kategori Baru</DialogTitle>
+               <DialogDescription>
+                  Isi data kategori di bawah ini.
+               </DialogDescription>
+            </DialogHeader>
             <Form {...form}>
                <form
                   onSubmit={form.handleSubmit(onUpdate)}

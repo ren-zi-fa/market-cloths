@@ -25,7 +25,6 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
    const { cart: carts, setCart, removeFromCart } = useCart()
    const { user, loading } = useProfile()
 
-   // Fungsi untuk mengurangi quantity
    const decreaseQuantity = (productId: string) => {
       const index = carts.findIndex((item) => item.id === productId)
       if (index !== -1) {
@@ -39,7 +38,6 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
       }
    }
 
-   // Fungsi untuk menambah quantity dengan batas stok
    const increaseQuantity = (productId: string, stok: number) => {
       const currentQty = carts.filter((item) => item.id === productId).length
       if (currentQty < stok) {
@@ -50,7 +48,6 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
       }
    }
 
-   // Mengelompokkan produk berdasarkan ID
    const cartMap = new Map<string, { product: Iproduct; qty: number }>()
    carts.forEach((item) => {
       if (cartMap.has(item.id)) {
@@ -61,7 +58,6 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
    })
    const groupedCarts = Array.from(cartMap.values())
 
-   // Hitung total harga
    const totalPrice = groupedCarts.reduce(
       (total, { product, qty }) => total + product.price * qty,
       0
@@ -84,97 +80,92 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
                <DrawerDescription>
                   Review your items before checkout.
                </DrawerDescription>
-               <div className="grid grid-cols-6 items-center">
-                  <div className="p-4 space-y-4 h-auto overflow-y-auto max-h-[60vh] col-span-4">
-                     {groupedCarts.length === 0 ? (
-                        <p className="text-center text-gray-500">
-                           Your cart is empty.
-                        </p>
-                     ) : (
-                        groupedCarts.map(({ product, qty }) => (
-                           <div
-                              key={product.id}
-                              className="flex items-center gap-4 border rounded-lg p-3"
-                           >
-                              <Image
-                                 width={200}
-                                 height={200}
-                                 src={
-                                    product.image_url[0] || '/placeholder.jpg'
-                                 }
-                                 alt={product.name}
-                                 className="w-16 h-16 object-cover rounded"
-                              />
-                              <div className="flex-1">
-                                 <h3 className="text-sm font-medium">
-                                    {product.name}
-                                 </h3>
-                                 <p className="text-sm text-gray-600">
-                                    {formatRupiah(product.price)}
-                                 </p>
-                                 <p className="text-xs text-gray-400">
-                                    Stock: {product.stok} | Quantity: {qty}
-                                 </p>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                 <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={() => decreaseQuantity(product.id)}
-                                 >
-                                    −
-                                 </Button>
-                                 <Button
-                                    size="sm"
-                                    onClick={() =>
-                                       increaseQuantity(
-                                          product.id,
-                                          product.stok
-                                       )
-                                    }
-                                    disabled={qty >= product.stok}
-                                 >
-                                    +
-                                 </Button>
-                              </div>
-                           </div>
-                        ))
-                     )}
-                  </div>
-                  <div className="px-6 py-4 flex-col gap-4 space-y-4 justify-between items-center text-lg font-semibold col-span-2">
-                     {loading ? (
-                        'loading...'
-                     ) : (
-                        <>
-                           <div className="">
-                              <span>Nama: </span>
-                              <span>{user?.username}</span>
-                           </div>
-                           <div className="">
-                              <span>Email: </span>
-                              <span>{user?.email}</span>
-                           </div>
-                        </>
-                     )}
-                     <div className="flex gap-2 items-center justify-between">
-                        <div className="flex gap-4">
-                           <span>Total:</span>
-                           <span>{formatRupiah(totalPrice)}</span>
-                        </div>
-                        <div className="flex gap-2">
-                           <Button disabled={groupedCarts.length === 0}>
-                              Checkout
-                           </Button>
-                           <DrawerClose asChild>
-                              <Button variant="outline">Cancel</Button>
-                           </DrawerClose>
-                        </div>
-                     </div>
-                  </div>
-               </div>
             </DrawerHeader>
 
-            {/* Tampilkan total harga */}
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-4 px-4 pb-6">
+               {/* Produk */}
+               <div className="space-y-4 col-span-4 max-h-[40vh] overflow-y-auto pr-2">
+                  {groupedCarts.length === 0 ? (
+                     <p className="text-center text-gray-500">
+                        Your cart is empty.
+                     </p>
+                  ) : (
+                     groupedCarts.map(({ product, qty }) => (
+                        <div
+                           key={product.id}
+                           className="flex items-center gap-4 border rounded-lg p-3"
+                        >
+                           <Image
+                              width={200}
+                              height={200}
+                              src={product.image_url[0] || '/placeholder.jpg'}
+                              alt={product.name}
+                              className="w-16 h-16 object-cover rounded"
+                           />
+                           <div className="flex-1">
+                              <h3 className="text-sm font-medium">{product.name}</h3>
+                              <p className="text-sm text-gray-600">
+                                 {formatRupiah(product.price)}
+                              </p>
+                              <p className="text-xs text-gray-400">
+                                 Stock: {product.stok} | Quantity: {qty}
+                              </p>
+                           </div>
+                           <div className="flex items-center gap-2">
+                              <Button
+                                 variant="destructive"
+                                 size="sm"
+                                 onClick={() => decreaseQuantity(product.id)}
+                              >
+                                 −
+                              </Button>
+                              <Button
+                                 size="sm"
+                                 onClick={() =>
+                                    increaseQuantity(product.id, product.stok)
+                                 }
+                                 disabled={qty >= product.stok}
+                              >
+                                 +
+                              </Button>
+                           </div>
+                        </div>
+                     ))
+                  )}
+               </div>
+
+               {/* Info user & total */}
+               <div className="col-span-2 flex flex-col gap-4 text-sm md:text-lg font-semibold">
+                  {loading ? (
+                     <p>Loading...</p>
+                  ) : (
+                     <>
+                        <div className="break-words">
+                           <span>Nama: </span>
+                           <span className="break-all">{user?.username}</span>
+                        </div>
+                        <div className="break-words">
+                           <span>Email: </span>
+                           <span className="break-all">{user?.email}</span>
+                        </div>
+                     </>
+                  )}
+                  <div className="flex justify-between">
+                     <span>Total:</span>
+                     <span>{formatRupiah(totalPrice)}</span>
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                     <Button className="flex-1" disabled={groupedCarts.length === 0}>
+                        Bayar
+                     </Button>
+                     <DrawerClose asChild>
+                        <Button className="flex-1" variant="outline">
+                           Cancel
+                        </Button>
+                     </DrawerClose>
+                  </div>
+               </div>
+            </div>
          </DrawerContent>
       </Drawer>
    )

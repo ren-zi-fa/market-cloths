@@ -14,8 +14,7 @@ import {
 
 import { toast } from 'sonner'
 import { ProductColumn } from './column-product'
-
-
+import FormEditProduct from './FormEditProduct'
 
 interface CellActionProps {
    data: ProductColumn
@@ -41,7 +40,7 @@ const CellAction = ({ data }: CellActionProps) => {
                   Copy ID
                </DropdownMenuItem>
                <DropdownMenuSeparator />
-               
+               <FormEditProduct id={data.id} />
             </DropdownMenuContent>
          </DropdownMenu>
       </>

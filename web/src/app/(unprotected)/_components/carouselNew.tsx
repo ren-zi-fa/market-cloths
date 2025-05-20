@@ -20,7 +20,7 @@ import { formatRupiah } from '@/lib/formatRupiah'
 
 type CarouselProps = Iproduct
 
-export default function CarouselProduct({ data }: { data: CarouselProps[] }) {
+export default function CarouselProductNew({ data }: { data: CarouselProps[] }) {
    const { user } = useProfile()
    const router = useRouter()
    const { addToCart } = useCart()
@@ -34,19 +34,16 @@ export default function CarouselProduct({ data }: { data: CarouselProps[] }) {
 
    return (
       <div className="w-full px-4 py-6">
-         <Carousel
-            opts={{ align: 'start' }}
-            className="w-full md:max-w-6xl mx-auto"
-         >
+         <Carousel opts={{ align: 'start' }} className="w-full md:max-w-6xl mx-auto">
             <CarouselContent>
                {data.map((item, index) => (
                   <CarouselItem
                      key={index}
-                     className="basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+                     className="basis-1/1 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
                   >
-                     <div className="p-2">
+                     <div className="p-2 h-full">
                         <Card className="transition hover:shadow-lg flex flex-col justify-between h-full">
-                           <CardContent className="relative aspect-[4/5] px-4 md:p-2">
+                           <CardContent className="relative aspect-[4/5] py-2 px-4">
                               <div className="relative w-full h-full">
                                  <Image
                                     src={item.image_url[0]}
@@ -55,22 +52,30 @@ export default function CarouselProduct({ data }: { data: CarouselProps[] }) {
                                     height={300}
                                     className="w-full h-full object-cover rounded-md"
                                  />
-                                 <p className="absolute inset-0 flex items-center justify-center text-white text-lg font-semibold bg-black/5 backdrop-blur-sm rounded-md text-center px-2">
-                                    {item.name}
-                                 </p>
-                                 <p className='text-center text-xs mt-2'>{item.description}</p>
+                                 <div className="absolute inset-0 bg-black/10 rounded-md flex items-center justify-center px-2 text-center">
+                                    <p className="text-white text-base font-semibold drop-shadow">
+                                       {item.name}
+                                    </p>
+                                 </div>
                               </div>
                            </CardContent>
-                           <CardFooter className="flex flex-col items-start justify-between px-4 py-2 gap-2 text-sm">
-                              <div className="w-full flex justify-between text-muted-foreground">
+
+                           <div className="px-4 pt-1 pb-0 text-sm text-gray-600 line-clamp-2">
+                              {item.description}
+                           </div>
+
+                           <CardFooter className="flex flex-col w-full md:items-center items-stretch justify-between px-4 py-2 gap-2 text-sm mt-auto">
+                              <div className="flex flex-col md:flex-row md:items-center w-full md:w-auto gap-1 md:gap-4 text-muted-foreground">
                                  <span className="font-semibold">
                                     {formatRupiah(item.price)}
                                  </span>
-                                 <span>Stok: {item.stok}</span>
+                                 <span className="text-xs md:text-sm">
+                                    Stok: {item.stok}
+                                 </span>
                               </div>
                               <Button
                                  size="sm"
-                                 className="w-full mt-1"
+                                 className="w-full  mt-1 md:mt-0"
                                  onClick={() => handleAddToCart(item)}
                               >
                                  <Plus className="mr-2 h-4 w-4" /> Add

@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import { Metadata } from 'next'
 import Image from 'next/image'
-import CarouselProduct from './_components/carousel'
 import instance from '@/lib/axios'
 import { Iproduct } from '@/types'
 import SectionBottom from './_components/section-bottom'
+import CarouselProductNew from './_components/carouselNew'
 export const metadata: Metadata = {
    title: 'Home',
    description: 'Home page'
@@ -62,7 +62,7 @@ export default async function Home() {
                This Week
             </h1>
             <div className="container px-6 flex justify-center">
-               <CarouselProduct data={newProduct} />
+               <CarouselProductNew data={newProduct} />
             </div>
          </div>
          <div className="text-center space-y-2">
