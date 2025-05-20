@@ -21,9 +21,6 @@ import {
    DropdownMenu,
    DropdownMenuCheckboxItem,
    DropdownMenuContent,
-   DropdownMenuItem,
-   DropdownMenuLabel,
-   DropdownMenuSeparator,
    DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
@@ -35,19 +32,31 @@ import {
    TableHeader,
    TableRow
 } from '@/components/ui/table'
+import instance from '@/lib/axios'
+import { toast } from 'sonner'
+import axios from 'axios'
+import {
+   Dialog,
+   DialogContent,
+   DialogFooter,
+   DialogHeader,
+   DialogTitle
+} from './ui/dialog'
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends { id: string | number }, TValue> {
    columns: ColumnDef<TData, TValue>[]
    data: TData[]
    searchkey: string
-   deleteBulk?: React.ReactNode
+   deleteBulkEndpoint?: string
+   onRefresh?: () => void
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends { id: string | number }, TValue>({
    data,
    columns,
    searchkey,
-   deleteBulk
+   deleteBulkEndpoint,
+   onRefresh
 }: DataTableProps<TData, TValue>) {
    const [sorting, setSorting] = React.useState<SortingState>([])
    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -69,7 +78,7 @@ export function DataTable<TData, TValue>({
       getFilteredRowModel: getFilteredRowModel(),
       onColumnVisibilityChange: setColumnVisibility,
       onRowSelectionChange: setRowSelection,
-
+      getRowId: (row) => String(row.id),
       state: {
          sorting,
          columnFilters,
@@ -78,10 +87,43 @@ export function DataTable<TData, TValue>({
       }
    })
 
+   const selectedIds = table
+      .getFilteredSelectedRowModel()
+      .rows.map((row) => row.original.id)
+   const [openDelete, setOpenDelete] = React.useState(false)
+
+   const handleBulkDelete = async () => {
+      try {
+         await instance.delete(`${deleteBulkEndpoint}`, {
+            data: { ids: selectedIds }
+         })
+         toast.success('data berhasil di hapus')
+         setOpenDelete(false)
+         onRefresh?.()
+      } catch (error) {
+         if (axios.isAxiosError(error)) {
+            const msg =
+               error.response?.data?.message || error.message || 'Unknown error'
+            toast.error('Gagal menyimpan produk: ' + msg)
+         } else {
+            toast.error('Gagal menyimpan produk: Unknown error')
+         }
+      }
+   }
+
    return (
       <div className="w-full">
          <div className="flex items-center py-4">
-            {deleteBulk && <Button>Hapus</Button>}
+            {deleteBulkEndpoint && (
+               <Button
+                  variant="destructive"
+                  className="mr-4"
+                  disabled={selectedIds.length === 0}
+                  onClick={() => setOpenDelete(true)}
+               >
+                  Hapus
+               </Button>
+            )}
             <Input
                placeholder="Search..."
                value={
@@ -193,6 +235,32 @@ export function DataTable<TData, TValue>({
                </Button>
             </div>
          </div>
+         <Dialog open={openDelete} onOpenChange={setOpenDelete}>
+            <DialogContent>
+               <DialogHeader>
+                  <DialogTitle>Konfirmasi Hapus</DialogTitle>
+               </DialogHeader>
+               <div>
+                  Apakah Anda yakin ingin menghapus kategori berikut?
+                  <ul className="mt-2 list-disc ml-6 text-sm text-muted-foreground">
+                     {selectedIds.map((id) => (
+                        <li key={id}>{id}</li>
+                     ))}
+                  </ul>
+               </div>
+               <DialogFooter>
+                  <Button
+                     variant="outline"
+                     onClick={() => setOpenDelete(false)}
+                  >
+                     Batal
+                  </Button>
+                  <Button variant="destructive" onClick={handleBulkDelete}>
+                     Lanjutkan
+                  </Button>
+               </DialogFooter>
+            </DialogContent>
+         </Dialog>
       </div>
    )
 }
