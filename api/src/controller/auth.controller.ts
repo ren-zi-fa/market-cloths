@@ -123,13 +123,15 @@ const handleLogin = async (req: Request, res: Response) => {
          httpOnly: true,
          secure: true,
          sameSite: 'none',
-         maxAge: vars.ACCESS_TOKEN_MAX_AGE
+         maxAge: vars.ACCESS_TOKEN_MAX_AGE,
+         path: '/'
       })
          .cookie('refresh_token', refresh_token, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: vars.REFRESH_TOKEN_MAX_AGE
+            maxAge: vars.REFRESH_TOKEN_MAX_AGE,
+            path: '/'
          })
          .json({
             success: true,
@@ -200,7 +202,8 @@ const handleRefreshToken = async (req: Request, res: Response) => {
          httpOnly: true,
          secure: true,
          sameSite: 'none',
-         maxAge: vars.ACCESS_TOKEN_MAX_AGE
+         maxAge: vars.ACCESS_TOKEN_MAX_AGE,
+           path: "/",
       }).json({ success: true, message: 'Token diperbarui' })
    } catch (error) {
       res.status(500).json({

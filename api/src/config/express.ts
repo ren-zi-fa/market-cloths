@@ -16,7 +16,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 const allowedOrigins = [
-   ...vars.FRONTEND_URL, // spread array dari env
+   ...vars.FRONTEND_URL, 
    'http://localhost:3000'
 ].filter(Boolean)
 
