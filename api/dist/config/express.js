@@ -21,7 +21,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 const allowedOrigins = [
     'http://localhost:3000',
-    'https://market-cloths.vercel.app'
+    'https://market-clozy.vercel.app'
 ];
 const corsOptions = {
     origin: (origin, callback) => {
