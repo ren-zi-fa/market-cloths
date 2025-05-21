@@ -14,11 +14,6 @@ const options = {
             version: '1.0.0',
             description: 'Dokumentasi API Market Clothes',
         },
-        servers: [
-            {
-                url: 'https://market-cloths.vercel.app/api', // sesuaikan URL
-            },
-        ],
         components: {
             securitySchemes: {
                 bearerAuth: {
