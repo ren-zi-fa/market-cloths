@@ -16,11 +16,11 @@ exports.swaggerOptions = {
         },
         servers: [
             {
-                url: vars_1.default.BASE_URL // Ganti port jika berbeda
+                url: vars_1.default.BASE_URL
             }
         ]
     },
     apis: [
-        path_1.default.join(__dirname, '../router/*.js') // Scan semua router untuk swagger doc
+        path_1.default.join(__dirname, '../router/*.js')
     ]
 };
