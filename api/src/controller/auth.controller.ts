@@ -18,7 +18,6 @@ import {
 import { isUserExist } from '../services/userService'
 import crypto from 'node:crypto'
 
-
 const handleRegister = async (req: Request, res: Response) => {
    try {
       const role: Role = 'user'
@@ -122,14 +121,14 @@ const handleLogin = async (req: Request, res: Response) => {
       await saveRefreshToken(refresh_token, userId)
       res.cookie('access_token', access_token, {
          httpOnly: true,
-         secure: vars.node_env === 'production',
-         sameSite: vars.node_env === 'production' ? 'strict' : 'lax',
-         maxAge:  vars.ACCESS_TOKEN_MAX_AGE
+         secure: true,
+         sameSite: 'none',
+         maxAge: vars.ACCESS_TOKEN_MAX_AGE
       })
          .cookie('refresh_token', refresh_token, {
             httpOnly: true,
-            secure: vars.node_env === 'production',
-            sameSite: vars.node_env === 'production' ? 'strict' : 'lax',
+            secure: true,
+            sameSite: 'none',
             maxAge: vars.REFRESH_TOKEN_MAX_AGE
          })
          .json({
@@ -199,8 +198,8 @@ const handleRefreshToken = async (req: Request, res: Response) => {
       )
       res.cookie('access_token', access_token, {
          httpOnly: true,
-         secure: vars.node_env === 'production',
-         sameSite: vars.node_env === 'production' ? 'strict' : 'lax',
+         secure: true,
+         sameSite: 'none',
          maxAge: vars.ACCESS_TOKEN_MAX_AGE
       }).json({ success: true, message: 'Token diperbarui' })
    } catch (error) {
@@ -248,4 +247,10 @@ const hadnleProfile = async (req: Request, res: Response) => {
    }
 }
 
-export { handleRegister, handleLogin, handleLogout, handleRefreshToken, hadnleProfile }
+export {
+   handleRegister,
+   handleLogin,
+   handleLogout,
+   handleRefreshToken,
+   hadnleProfile
+}
