@@ -15,7 +15,7 @@ app.use('/images', express.static(path.join(__dirname, '../../public/images')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
-const allowedOrigins = [vars.FRONTEND_URL]
+const allowedOrigins = [vars.FRONTEND_URL || 'http://localhost:3000']
 
 const corsOptions = {
    origin: (origin: any, callback: any) => {
