@@ -5,7 +5,8 @@
    "scripts": {
       "dev": "nodemon",
       "build": "rimraf dist && tsc  && cp .env ./dist/.env",
-      "start": "node dist/server.js"
+      "start": "node dist/server.js",
+      "gen:docs": "npx tsx src/docs/generate-swagger-json.ts"
    },
    "keywords": [],
    "author": "",
