@@ -16,7 +16,7 @@ const options = {
         },
         servers: [
             {
-                url: 'https://market-cloths.vercel.app', // sesuaikan URL
+                url: 'https://market-cloths.vercel.app/api', // sesuaikan URL
             },
         ],
         components: {
