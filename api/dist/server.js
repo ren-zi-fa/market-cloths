@@ -7,6 +7,6 @@ const express_1 = require("./config/express");
 const vars_1 = __importDefault(require("./config/vars"));
 express_1.app.listen(vars_1.default.port, () => {
     console.log(`APP is running on http://localhost:${vars_1.default.port}  `);
-    console.log(`Swagger docs at http://localhost:${vars_1.default.port}/docs`);
+    console.log(`Swagger docs at http://localhost:${vars_1.default.port}/api-docs`);
 });
 exports.default = express_1.app;
