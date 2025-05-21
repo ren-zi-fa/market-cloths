@@ -6,7 +6,7 @@ import swaggerUi from 'swagger-ui-express'
 import cookieParser from 'cookie-parser'
 import { notFoundMiddleware } from '../middlewares/notFoundMiddleware'
 import { errorMiddleware } from '../middlewares/errorMiddleware'
-import {  swaggerOptions } from '../swagger/swagger'
+import { swaggerOptions } from '../swagger/swagger'
 import swaggerJSDoc from 'swagger-jsdoc'
 const app = express()
 app.use(express.static(path.join(__dirname, '../public')))
@@ -35,9 +35,19 @@ app.get('/', (req, res) => {
    res.json({ message: 'api is ok' })
 })
 app.use('/api', router)
+app.use(
+   '/swagger-ui',
+   express.static(path.join(__dirname, '../public/swagger-ui'))
+)
 
 const specs = swaggerJSDoc(swaggerOptions)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
+app.use(
+   '/api-docs',
+   swaggerUi.serve,
+   swaggerUi.setup(specs, {
+      customCssUrl: '/api/swagger-ui.css',
+   })
+)
 // Not found & error handler harus di bawah semua route
 app.use(notFoundMiddleware)
 app.use(errorMiddleware)
