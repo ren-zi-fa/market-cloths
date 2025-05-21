@@ -17,6 +17,9 @@ exports.default = {
     ACCESS_TOKEN_MAX_AGE: Number(process.env.ACCESS_TOKEN_MAX_AGE) || 900000,
     LIMIT_PRODUCT: Number(process.env.LIMIT_PRODUCT) || 20,
     BASE_URL: process.env.BASE_URL || 'http://localhost:3100',
+    DOMAIN_FRONTEND: process.env.NODE_ENV === 'development'
+        ? 'localhost'
+        : process.env.DOMAIN_FRONTEND || 'localhost',
     FRONTEND_URL: process.env.FRONTEND_URL
         ? JSON.parse(process.env.FRONTEND_URL)
         : []

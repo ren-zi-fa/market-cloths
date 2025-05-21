@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import instance from './lib/axios'
+
 
 export async function middleware(request: NextRequest) {
-   const accessToken = request.cookies.get('access_token')
    const refreshToken = request.cookies.get('refresh_token')
 
    

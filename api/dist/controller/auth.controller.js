@@ -121,6 +121,7 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.cookie('access_token', access_token, {
             httpOnly: true,
             secure: true,
+            domain: vars_1.default.DOMAIN_FRONTEND,
             sameSite: 'none',
             maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE
         })
@@ -128,7 +129,9 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: vars_1.default.REFRESH_TOKEN_MAX_AGE
+            domain: vars_1.default.DOMAIN_FRONTEND,
+            maxAge: vars_1.default.REFRESH_TOKEN_MAX_AGE,
+            path: '/'
         })
             .json({
             success: true,
@@ -180,7 +183,6 @@ const handleRefreshToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
             return;
         }
-        // Ambil user dari userId via service
         const found = yield (0, userService_1.findUserById)(tokenData.userId);
         if (!found) {
             res.status(404).json({ message: 'User tidak ditemukan' });
@@ -199,6 +201,7 @@ const handleRefreshToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
             httpOnly: true,
             secure: true,
             sameSite: 'none',
+            domain: vars_1.default.DOMAIN_FRONTEND,
             maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE
         }).json({ success: true, message: 'Token diperbarui' });
     }
