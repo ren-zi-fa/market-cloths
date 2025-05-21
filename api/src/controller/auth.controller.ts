@@ -122,14 +122,15 @@ const handleLogin = async (req: Request, res: Response) => {
       res.cookie('access_token', access_token, {
          httpOnly: true,
          secure: true,
+         domain: vars.DOMAIN_FRONTEND,
          sameSite: 'none',
-         maxAge: vars.ACCESS_TOKEN_MAX_AGE,
-         path: '/'
+         maxAge: vars.ACCESS_TOKEN_MAX_AGE
       })
          .cookie('refresh_token', refresh_token, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
+            domain: vars.DOMAIN_FRONTEND,
             maxAge: vars.REFRESH_TOKEN_MAX_AGE,
             path: '/'
          })
@@ -179,7 +180,7 @@ const handleRefreshToken = async (req: Request, res: Response) => {
          })
          return
       }
-      // Ambil user dari userId via service
+
       const found = await findUserById(tokenData.userId)
       if (!found) {
          res.status(404).json({ message: 'User tidak ditemukan' })
@@ -202,8 +203,8 @@ const handleRefreshToken = async (req: Request, res: Response) => {
          httpOnly: true,
          secure: true,
          sameSite: 'none',
-         maxAge: vars.ACCESS_TOKEN_MAX_AGE,
-           path: "/",
+         domain: vars.DOMAIN_FRONTEND,
+         maxAge: vars.ACCESS_TOKEN_MAX_AGE
       }).json({ success: true, message: 'Token diperbarui' })
    } catch (error) {
       res.status(500).json({

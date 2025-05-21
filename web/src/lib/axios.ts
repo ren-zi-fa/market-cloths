@@ -44,13 +44,7 @@ instance.interceptors.response.use(
          isRefreshing = true
 
          try {
-            await instance.post(
-               '/api/auth/refresh-token',
-               {},
-               {
-                  withCredentials: true
-               }
-            )
+            await instance.post('/api/auth/refresh-token')
 
             processQueue(null, null)
 

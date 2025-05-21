@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import instance from './lib/axios'
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+   const accessToken = request.cookies.get('access_token')
    const refreshToken = request.cookies.get('refresh_token')
 
-   // Proteksi halaman login/register
-   if (
-      refreshToken &&
-      (request.nextUrl.pathname === '/auth/login' ||
-         request.nextUrl.pathname === '/auth/register')
-   ) {
-      return NextResponse.redirect(new URL('/', request.url))
-   }
-   // Proteksi halaman dashboard/profile
+   
+
+   // Jika tidak ada refresh_token dan akses halaman protected, redirect ke login
    if (
       !refreshToken &&
       (request.nextUrl.pathname.startsWith('/dashboard') ||
@@ -19,6 +15,16 @@ export function middleware(request: NextRequest) {
    ) {
       return NextResponse.redirect(new URL('/auth/login', request.url))
    }
+
+   // Jika sudah login, redirect dari login/register ke home
+   if (
+      refreshToken &&
+      (request.nextUrl.pathname === '/auth/login' ||
+         request.nextUrl.pathname === '/auth/register')
+   ) {
+      return NextResponse.redirect(new URL('/', request.url))
+   }
+
    return NextResponse.next()
 }
 
