@@ -15,5 +15,6 @@ exports.default = {
     JWT_SECRET: process.env.JWT_SECRET,
     REFRESH_TOKEN_MAX_AGE: Number(process.env.REFRESH_TOKEN_MAX_AGE) || 2592000000,
     ACCESS_TOKEN_MAX_AGE: Number(process.env.ACCESS_TOKEN_MAX_AGE) || 900000,
-    LIMIT_PRODUCT: Number(process.env.LIMIT_PRODUCT) || 20
+    LIMIT_PRODUCT: Number(process.env.LIMIT_PRODUCT) || 20,
+    BASE_URL: process.env.BASE_URL || 'http://localhost:3100'
 };

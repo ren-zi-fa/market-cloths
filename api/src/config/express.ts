@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 const allowedOrigins = [
    'http://localhost:3000',
-   'https://market-cloths.vercel.app'
+   'https://market-cloths-zy.vercel.app'
 ]
 
 const corsOptions = {

@@ -2,6 +2,7 @@ import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import { Express } from 'express'
 import path from 'path'
+import vars from '../config/vars'
 
 const options = {
    definition: {
@@ -13,12 +14,12 @@ const options = {
       },
       servers: [
          {
-            url: 'http://localhost:3100' // Ganti port jika berbeda
+            url: vars.BASE_URL
          }
       ]
    },
    apis: [
-      path.join(__dirname, '../router/*.ts') // Scan semua router untuk swagger doc
+      path.join(__dirname, '../router/*.ts') 
    ]
 }
 

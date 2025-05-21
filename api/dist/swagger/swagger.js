@@ -7,23 +7,24 @@ exports.setupSwagger = setupSwagger;
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const path_1 = __importDefault(require("path"));
+const vars_1 = __importDefault(require("../config/vars"));
 const options = {
     definition: {
         openapi: '3.0.0',
         info: {
             title: 'Market Cloths API',
             version: '1.0.0',
-            description: 'API documentation for Market Cloths',
+            description: 'API documentation for Market Cloths'
         },
         servers: [
             {
-                url: 'http://localhost:3100', // Ganti port jika berbeda
-            },
-        ],
+                url: vars_1.default.BASE_URL
+            }
+        ]
     },
     apis: [
-        path_1.default.join(__dirname, '../router/*.js'), // Scan semua router untuk swagger doc
-    ],
+        path_1.default.join(__dirname, '../router/*.js') // Scan semua router untuk swagger doc
+    ]
 };
 const swaggerSpec = (0, swagger_jsdoc_1.default)(options);
 function setupSwagger(app) {
