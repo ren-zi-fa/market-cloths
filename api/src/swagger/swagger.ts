@@ -4,7 +4,7 @@ import { Express } from 'express'
 import path from 'path'
 import vars from '../config/vars'
 
-const options = {
+export const options = {
    definition: {
       openapi: '3.0.0',
       info: {
@@ -14,17 +14,10 @@ const options = {
       },
       servers: [
          {
-            url: vars.BASE_URL
+            url: vars.BASE_URL,
+            description: 'Market cloths  Documentation'
          }
       ]
    },
-   apis: [
-      path.join(__dirname, '../router/*.ts') 
-   ]
-}
-
-const swaggerSpec = swaggerJSDoc(options)
-
-export function setupSwagger(app: Express) {
-   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+   apis: [path.join(__dirname, '../router/*.ts')]
 }

@@ -5,7 +5,9 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { notFoundMiddleware } from '../middlewares/notFoundMiddleware'
 import { errorMiddleware } from '../middlewares/errorMiddleware'
-import { setupSwagger } from '../swagger/swagger'
+import { options } from '../swagger/swagger'
+import swaggerUI from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
 
 const app = express()
 app.use(express.static(path.join(__dirname, '../public')))
@@ -17,6 +19,8 @@ const allowedOrigins = [
    'http://localhost:3000',
    'https://market-cloths-zy.vercel.app'
 ]
+const CSS_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css"
 
 const corsOptions = {
    origin: (origin: any, callback: any) => {
@@ -30,8 +34,12 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
-// Setup Swagger sebelum routes lain
-setupSwagger(app)
+const specs = swaggerJsDoc(options);
+app.use(
+  "/api-docs",
+  swaggerUI.serve,
+  swaggerUI.setup(specs, { customCssUrl: CSS_URL })
+);
 
 app.get('/', (req, res) => {
    res.json({ message: 'api is ok' })

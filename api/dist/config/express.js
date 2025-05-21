@@ -12,6 +12,8 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const notFoundMiddleware_1 = require("../middlewares/notFoundMiddleware");
 const errorMiddleware_1 = require("../middlewares/errorMiddleware");
 const swagger_1 = require("../swagger/swagger");
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const app = (0, express_1.default)();
 exports.app = app;
 app.use(express_1.default.static(path_1.default.join(__dirname, '../public')));
@@ -23,6 +25,7 @@ const allowedOrigins = [
     'http://localhost:3000',
     'https://market-cloths-zy.vercel.app'
 ];
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 const corsOptions = {
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
@@ -35,8 +38,8 @@ const corsOptions = {
     credentials: true
 };
 app.use((0, cors_1.default)(corsOptions));
-// Setup Swagger sebelum routes lain
-(0, swagger_1.setupSwagger)(app);
+const specs = (0, swagger_jsdoc_1.default)(swagger_1.options);
+app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs, { customCssUrl: CSS_URL }));
 app.get('/', (req, res) => {
     res.json({ message: 'api is ok' });
 });
