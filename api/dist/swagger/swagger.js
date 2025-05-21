@@ -1,46 +1,31 @@
 "use strict";
-// import swaggerJSDoc from 'swagger-jsdoc'
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setupSwagger = void 0;
+exports.setupSwagger = setupSwagger;
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+const path_1 = __importDefault(require("path"));
 const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Dokumentasi API',
+            title: 'Market Cloths API',
             version: '1.0.0',
-            description: 'Dokumentasi API Market Clothes',
+            description: 'API documentation for Market Cloths',
         },
-        components: {
-            securitySchemes: {
-                bearerAuth: {
-                    type: 'http',
-                    scheme: 'bearer',
-                    bearerFormat: 'JWT',
-                },
-            },
-        },
-        security: [
+        servers: [
             {
-                bearerAuth: [],
+                url: 'http://localhost:3100', // Ganti port jika berbeda
             },
         ],
     },
-    apis: ['./src/router/**/*.ts', './router/**/*.js'], // file route API untuk scan swagger-jsdoc
+    apis: [
+        path_1.default.join(__dirname, '../router/*.js'), // Scan semua router untuk swagger doc
+    ],
 };
 const swaggerSpec = (0, swagger_jsdoc_1.default)(options);
-const setupSwagger = (app) => {
-    // Sajikan file swagger.json yang di-generate
-    app.get('/api-docs/swagger.json', (_, res) => {
-        res.setHeader('Content-Type', 'application/json');
-        res.send(swaggerSpec);
-    });
-    // Redirect /api-docs ke halaman swagger-ui statis
-    app.get('/api-docs', (_, res) => {
-        res.redirect('/swagger-ui/');
-    });
-};
-exports.setupSwagger = setupSwagger;
+function setupSwagger(app) {
+    app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerSpec));
+}

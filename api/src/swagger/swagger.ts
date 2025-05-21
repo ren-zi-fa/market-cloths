@@ -1,62 +1,29 @@
-// import swaggerJSDoc from 'swagger-jsdoc'
-
-// export const swaggerSpec = swaggerJSDoc({
-//   definition: {
-//     openapi: '3.0.0',
-//     info: {
-//       title: 'MARKET CLOTHS API',
-//       version: '1.0.0',
-//       description: 'Dokumentasi REST API Market-Cloths',
-//     },
-//   },
-//   apis: ['./src/router/*.ts'],
-// })
-
-import { Express } from 'express';
-import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
+import { Express } from 'express'
+import path from 'path'
 
 const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Dokumentasi API',
-      version: '1.0.0',
-      description: 'Dokumentasi API Market Clothes',
-    },
-    servers: [
-      {
-        url: 'https://market-cloths.vercel.app', // sesuaikan URL
+   definition: {
+      openapi: '3.0.0',
+      info: {
+         title: 'Market Cloths API',
+         version: '1.0.0',
+         description: 'API documentation for Market Cloths'
       },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
-    },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
-  },
-  apis: ['./src/router/**/*.ts','./router/**/*.js'], // file route API untuk scan swagger-jsdoc
-};
+      servers: [
+         {
+            url: 'http://localhost:3100' // Ganti port jika berbeda
+         }
+      ]
+   },
+   apis: [
+      path.join(__dirname, '../router/*.ts') // Scan semua router untuk swagger doc
+   ]
+}
 
-const swaggerSpec = swaggerJsdoc(options);
+const swaggerSpec = swaggerJSDoc(options)
 
-export const setupSwagger = (app: Express) => {
-  // Sajikan file swagger.json yang di-generate
-  app.get('/api-docs/swagger.json', (_, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(swaggerSpec);
-  });
-
-  // Redirect /api-docs ke halaman swagger-ui statis
-  app.get('/api-docs', (_, res) => {
-    res.redirect('/swagger-ui/');
-  });
-};
+export function setupSwagger(app: Express) {
+   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+}

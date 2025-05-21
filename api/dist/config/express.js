@@ -35,12 +35,12 @@ const corsOptions = {
     credentials: true
 };
 app.use((0, cors_1.default)(corsOptions));
+// Setup Swagger sebelum routes lain
+(0, swagger_1.setupSwagger)(app);
 app.get('/', (req, res) => {
     res.json({ message: 'api is ok' });
 });
 app.use('/api', router_1.router);
-app.use('/api-docs', express_1.default.static(path_1.default.join(__dirname, '../../public/swagger/swagger-ui')));
-(0, swagger_1.setupSwagger)(app);
 // Not found & error handler harus di bawah semua route
 app.use(notFoundMiddleware_1.notFoundMiddleware);
 app.use(errorMiddleware_1.errorMiddleware);

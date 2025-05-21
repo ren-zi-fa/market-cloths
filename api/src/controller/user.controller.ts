@@ -1,8 +1,5 @@
 import { Request, Response } from 'express'
 
-import { matchedData, validationResult } from 'express-validator'
-
-import vars from '../config/vars'
 import { getAllUser } from '../services/userService'
 
 const handleGetAllUser = async (req: Request, res: Response) => {
