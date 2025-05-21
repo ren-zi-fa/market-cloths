@@ -21,6 +21,6 @@ exports.swaggerOptions = {
         ]
     },
     apis: [
-        path_1.default.join(__dirname, '../router/*.js')
+        path_1.default.join(__dirname, '../router/*.{ts,js}')
     ]
 };
