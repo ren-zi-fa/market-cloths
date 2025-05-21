@@ -1,18 +1,14 @@
 'use client'
 
 import {
-   BellIcon,
-   CreditCardIcon,
    LogOutIcon,
    MoreVerticalIcon,
-   UserCircleIcon
 } from 'lucide-react'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar } from '@/components/ui/avatar'
 import {
    DropdownMenu,
    DropdownMenuContent,
-   DropdownMenuGroup,
    DropdownMenuItem,
    DropdownMenuLabel,
    DropdownMenuSeparator,
@@ -24,19 +20,11 @@ import {
    SidebarMenuItem,
    useSidebar
 } from '@/components/ui/sidebar'
-import { useProfile } from '@/hooks/use-profile'
+import { User } from '@/types'
 
-export function NavUser({
-   user
-}: {
-   user: {
-      name: string
-      email: string
-      avatar: string
-   }
-}) {
+type UserProps = Omit<User, 'tokenType' | 'userId' | 'role'>
+export function NavUser({ email, username }: UserProps) {
    const { isMobile } = useSidebar()
-   const { user: dataUser } = useProfile()
 
    return (
       <SidebarMenu>
@@ -47,18 +35,11 @@ export function NavUser({
                      size="lg"
                      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                   >
-                     <Avatar className="h-8 w-8 rounded-lg grayscale">
-                        <AvatarImage src={user.avatar} alt={user.name} />
-                        <AvatarFallback className="rounded-lg">
-                           CN
-                        </AvatarFallback>
-                     </Avatar>
+                     <Avatar className="h-8 w-8 rounded-lg grayscale"></Avatar>
                      <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-medium">
-                           {user.name}
-                        </span>
+                        <span className="truncate font-medium">{username}</span>
                         <span className="truncate text-xs text-muted-foreground">
-                           {user.email}
+                           {email}
                         </span>
                      </div>
                      <MoreVerticalIcon className="ml-auto size-4" />
@@ -72,36 +53,18 @@ export function NavUser({
                >
                   <DropdownMenuLabel className="p-0 font-normal">
                      <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                        <div className="">{dataUser?.username}</div>
-                        {/* <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                </Avatar> */}
                         <div className="grid flex-1 text-left text-sm leading-tight">
                            <span className="truncate font-medium">
-                              {user.name}
+                              {username}
                            </span>
                            <span className="truncate text-xs text-muted-foreground">
-                              {user.email}
+                              {email}
                            </span>
                         </div>
                      </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                     <DropdownMenuItem>
-                        <UserCircleIcon />
-                        Account
-                     </DropdownMenuItem>
-                     <DropdownMenuItem>
-                        <CreditCardIcon />
-                        Billing
-                     </DropdownMenuItem>
-                     <DropdownMenuItem>
-                        <BellIcon />
-                        Notifications
-                     </DropdownMenuItem>
-                  </DropdownMenuGroup>
+
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                      <LogOutIcon />

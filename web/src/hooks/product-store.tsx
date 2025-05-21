@@ -1,19 +1,27 @@
 import { create } from 'zustand'
 import instance from '@/lib/axios'
-import {  Iproduct } from '@/types'
+import { Iproduct } from '@/types'
 import { useEffect, useState } from 'react'
 
 interface ProductState {
    data: Iproduct[]
-   fetchData: () => Promise<void>
+   fetchData: (limit?: number) => Promise<void>
+   pagination?: {
+      page: number
+      limit: number
+      totalItems: number
+      totalPages: number
+   } | null
 }
 
 export const useProductStore = create<ProductState>((set) => ({
    data: [],
-   fetchData: async () => {
+   pagination: null,
+   fetchData: async (limit?: number) => {
       try {
-         const res = await instance.get('/api/products')
-         set({ data: res.data.data })
+         const res = await instance.get(`/api/products?limit=${limit}`)
+         set({ data: res.data.data },)
+         set({pagination:res.data.pagination})
       } catch (e) {
          console.log(e)
       }

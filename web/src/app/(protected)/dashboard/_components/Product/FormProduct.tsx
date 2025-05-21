@@ -58,7 +58,7 @@ export default function FormProduct({ onSucces }: FormProps) {
    })
    useEffect(() => {
       fetchData()
-   }, [])
+   }, [fetchData])
    const onSubmit = async (values: ProductFormValues) => {
       setLoading(true)
       try {

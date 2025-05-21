@@ -137,3 +137,15 @@ export async function findUserById(userId: string) {
    const { password, ...userWithoutPassword } = userData
    return { userId: userSnap.id, user: userWithoutPassword }
 }
+
+export async function getAllUser() {
+   const userSnapshot = await db
+      .collection('user')
+      .where('role', '==', 'user')
+      .get()
+   const users = userSnapshot.docs.map((doc) => {
+      const { password, ...userWithoutPassword } = doc.data()
+      return { userId: doc.id, ...userWithoutPassword }
+   })
+   return users
+}

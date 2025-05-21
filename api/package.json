@@ -1,9 +1,11 @@
 {
    "name": "api",
    "version": "1.0.0",
-   "main": "index.js",
+   "main": "dist/server.js",
    "scripts": {
-      "dev": "nodemon"
+      "dev": "nodemon",
+      "build": "rimraf dist && tsc  && cp .env ./dist/.env",
+      "start": "node dist/server.js"
    },
    "keywords": [],
    "author": "",

@@ -6,14 +6,15 @@ import Image from 'next/image'
 import instance from '@/lib/axios'
 import { Iproduct } from '@/types'
 import SectionBottom from './_components/section-bottom'
-import CarouselProductNew from './_components/carouselNew'
+import HomeView from './_components'
+
 export const metadata: Metadata = {
    title: 'Home',
    description: 'Home page'
 }
 
 export default async function Home() {
-   const { data } = await instance.get('/api/products?new=false')
+   const { data } = await instance.get('/api/products?limit=8')
    const newProduct: Iproduct[] = data.data
    return (
       <div className="flex flex-col gap-6 mt-10 px-4">
@@ -61,9 +62,7 @@ export default async function Home() {
                New <br />
                This Week
             </h1>
-            <div className="container px-6 flex justify-center">
-               <CarouselProductNew data={newProduct} />
-            </div>
+            <HomeView newProduct={newProduct} />
          </div>
          <div className="text-center space-y-2">
             <h1 className="md:text-5xl tracking-widest text-3xl">

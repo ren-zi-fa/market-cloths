@@ -9,6 +9,7 @@ import {
    getProductById,
    updateProductById
 } from '../services/productService'
+import vars from '../config/vars'
 
 const handleGetProducts = async (req: Request, res: Response) => {
    try {
@@ -25,7 +26,7 @@ const handleGetProducts = async (req: Request, res: Response) => {
 
       // Pagination params, default page 1, limit 10
       const page = data.page ? Number(data.page) : 1
-      const limit = data.limit ? Number(data.limit) : 10
+      const limit = data.limit ? Number(data.limit) : vars.LIMIT_PRODUCT
 
       // Batasi limit maksimal 50 untuk keamanan
       const safeLimit = limit > 50 ? 50 : limit

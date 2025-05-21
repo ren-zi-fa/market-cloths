@@ -84,7 +84,7 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
 
             <div className="grid grid-cols-2 md:grid-cols-6 gap-4 px-4 pb-6">
                {/* Produk */}
-               <div className="space-y-4 col-span-4 max-h-[40vh] overflow-y-auto pr-2">
+               <div className="space-y-4 col-span-4 max-h-[35vh] md:max-h-[40vh] overflow-y-auto pr-2">
                   {groupedCarts.length === 0 ? (
                      <p className="text-center text-gray-500">
                         Your cart is empty.

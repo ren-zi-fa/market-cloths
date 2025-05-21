@@ -18,14 +18,12 @@ import { useRouter } from 'next/navigation'
 import { useCart } from '@/hooks/use-cart'
 import { formatRupiah } from '@/lib/formatRupiah'
 
-type CarouselProps = Iproduct
-
-export default function CarouselProductNew({ data }: { data: CarouselProps[] }) {
+export default function CarouselProductNew({ data }: { data: Iproduct[] }) {
    const { user } = useProfile()
    const router = useRouter()
    const { addToCart } = useCart()
 
-   const handleAddToCart = (item: CarouselProps) => {
+   const handleAddToCart = (item: Iproduct) => {
       if (!user) {
          return router.push('/auth/login')
       }
@@ -34,7 +32,10 @@ export default function CarouselProductNew({ data }: { data: CarouselProps[] }) 
 
    return (
       <div className="w-full px-4 py-6">
-         <Carousel opts={{ align: 'start' }} className="w-full md:max-w-6xl mx-auto">
+         <Carousel
+            opts={{ align: 'start' }}
+            className="w-full md:max-w-6xl mx-auto"
+         >
             <CarouselContent>
                {data.map((item, index) => (
                   <CarouselItem

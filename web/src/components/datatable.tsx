@@ -1,6 +1,5 @@
 'use client'
 
-
 import * as React from 'react'
 import {
    ColumnDef,
@@ -14,7 +13,7 @@ import {
    getSortedRowModel,
    useReactTable
 } from '@tanstack/react-table'
-import {  ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 
@@ -45,6 +44,7 @@ interface DataTableProps<TData extends { id: string | number }, TValue> {
    searchkey: string
    deleteBulkEndpoint?: string
    onRefresh?: () => void
+   dataAddition?: React.ReactNode
 }
 
 export function DataTable<TData extends { id: string | number }, TValue>({
@@ -52,6 +52,7 @@ export function DataTable<TData extends { id: string | number }, TValue>({
    columns,
    searchkey,
    deleteBulkEndpoint,
+   dataAddition,
    onRefresh
 }: DataTableProps<TData, TValue>) {
    const [sorting, setSorting] = React.useState<SortingState>([])
@@ -109,7 +110,7 @@ export function DataTable<TData extends { id: string | number }, TValue>({
 
    return (
       <div className="w-full">
-         <div className="flex items-center py-4">
+         <div className="flex items-center py-4 space-x-4">
             {deleteBulkEndpoint && (
                <Button
                   variant="destructive"
@@ -120,6 +121,7 @@ export function DataTable<TData extends { id: string | number }, TValue>({
                   Hapus
                </Button>
             )}
+
             <Input
                placeholder="Search..."
                value={
@@ -130,6 +132,7 @@ export function DataTable<TData extends { id: string | number }, TValue>({
                }
                className="max-w-sm"
             />
+            {dataAddition && <>{dataAddition}</>}
 
             <DropdownMenu>
                <DropdownMenuTrigger asChild>

@@ -1,4 +1,5 @@
 import { db } from '../config/firebase'
+import vars from '../config/vars'
 import { Category, Product } from '../types'
 
 export const createProduct = async (productData: Product) => {
@@ -8,7 +9,7 @@ export const createProduct = async (productData: Product) => {
 
 export async function fetchProducts(
    category?: string,
-   limit: number = 10,
+   limit: number = vars.LIMIT_PRODUCT,
    page: number = 1,
    search?: string
 ) {

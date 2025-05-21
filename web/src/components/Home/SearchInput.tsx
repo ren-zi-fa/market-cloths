@@ -8,9 +8,8 @@ export default function SearchInput() {
 
    return (
       <div className="container max-w-md space-y-2">
-         <h1>MEN</h1>
-         <h1>WOMEN</h1>
-         <h1>KIDS</h1>
+         <h1>CASUAL</h1>
+         <h1>FORMAL</h1>
          <div className="relative">
             <Input
                value={value}
