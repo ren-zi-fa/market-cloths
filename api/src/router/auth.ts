@@ -106,7 +106,7 @@ router.get('/profile', authController.hadnleProfile)
  *     LoginInput:
  *       type: object
  *       properties:
- *         email:
+ *         login_name:
  *           type: string
  *         password:
  *           type: string

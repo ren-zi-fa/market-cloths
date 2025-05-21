@@ -8,17 +8,14 @@ import { notFoundMiddleware } from '../middlewares/notFoundMiddleware'
 import { errorMiddleware } from '../middlewares/errorMiddleware'
 import swaggerJSDoc from 'swagger-jsdoc'
 import docs from '../docs/route'
+import vars from './vars'
 const app = express()
 app.use(express.static(path.join(__dirname, '../public')))
 app.use('/images', express.static(path.join(__dirname, '../../public/images')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
-const allowedOrigins = [
-   'http://localhost:3000',
-   'https://market-clozy.vercel.app',
-   'https://market-cloths.vercel.app'
-]
+const allowedOrigins = [vars.FRONTEND_URL]
 
 const corsOptions = {
    origin: (origin: any, callback: any) => {

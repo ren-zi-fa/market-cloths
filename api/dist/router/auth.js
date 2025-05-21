@@ -93,7 +93,7 @@ router.get('/profile', controller_1.authController.hadnleProfile);
  *     LoginInput:
  *       type: object
  *       properties:
- *         email:
+ *         login_name:
  *           type: string
  *         password:
  *           type: string

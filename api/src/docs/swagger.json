@@ -537,7 +537,7 @@
       "LoginInput": {
         "type": "object",
         "properties": {
-          "email": {
+          "login_name": {
             "type": "string"
           },
           "password": {

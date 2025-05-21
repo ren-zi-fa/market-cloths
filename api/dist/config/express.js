@@ -12,6 +12,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const notFoundMiddleware_1 = require("../middlewares/notFoundMiddleware");
 const errorMiddleware_1 = require("../middlewares/errorMiddleware");
 const route_1 = __importDefault(require("../docs/route"));
+const vars_1 = __importDefault(require("./vars"));
 const app = (0, express_1.default)();
 exports.app = app;
 app.use(express_1.default.static(path_1.default.join(__dirname, '../public')));
@@ -19,11 +20,7 @@ app.use('/images', express_1.default.static(path_1.default.join(__dirname, '../.
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
-const allowedOrigins = [
-    'http://localhost:3000',
-    'https://market-clozy.vercel.app',
-    'https://market-cloths.vercel.app'
-];
+const allowedOrigins = [vars_1.default.FRONTEND_URL];
 const corsOptions = {
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
