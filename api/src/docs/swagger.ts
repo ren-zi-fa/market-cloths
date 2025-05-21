@@ -20,6 +20,6 @@ export const swaggerOptions = {
       ]
    },
    apis: [
-      path.join(__dirname, '../router/*.ts') 
+      path.join(__dirname, '../router/*.{ts,js}') 
    ]
 }
