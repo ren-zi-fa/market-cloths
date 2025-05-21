@@ -1,5 +1,5 @@
 import type { NextConfig } from 'next'
-
+const backendUrl = process.env.BACKEND_URL || 'http://localhost:3100'
 const nextConfig: NextConfig = {
    images: {
       remotePatterns: [
@@ -12,17 +12,25 @@ const nextConfig: NextConfig = {
    async headers() {
       return [
          {
-            source: '/(.*)', 
+            source: '/(.*)',
             headers: [
                {
                   key: 'Access-Control-Allow-Origin',
-                  value: 'https://market-cloths.vercel.app' 
+                  value: 'https://market-cloths.vercel.app'
                },
                {
                   key: 'Access-Control-Allow-Credentials',
                   value: 'true'
                }
             ]
+         }
+      ]
+   },
+   async rewrites() {
+      return [
+         {
+            source: '/:path*',
+            destination: `${backendUrl}/:path*`
          }
       ]
    }

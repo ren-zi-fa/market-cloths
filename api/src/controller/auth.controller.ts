@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-
 import { matchedData, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
 import jwt, { JwtPayload } from 'jsonwebtoken'
@@ -122,7 +121,6 @@ const handleLogin = async (req: Request, res: Response) => {
       res.cookie('access_token', access_token, {
          httpOnly: true,
          secure: true,
-         domain: vars.DOMAIN_FRONTEND,
          sameSite: 'none',
          maxAge: vars.ACCESS_TOKEN_MAX_AGE
       })
@@ -130,7 +128,7 @@ const handleLogin = async (req: Request, res: Response) => {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            domain: vars.DOMAIN_FRONTEND,
+
             maxAge: vars.REFRESH_TOKEN_MAX_AGE,
             path: '/'
          })
@@ -203,7 +201,6 @@ const handleRefreshToken = async (req: Request, res: Response) => {
          httpOnly: true,
          secure: true,
          sameSite: 'none',
-         domain: vars.DOMAIN_FRONTEND,
          maxAge: vars.ACCESS_TOKEN_MAX_AGE
       }).json({ success: true, message: 'Token diperbarui' })
    } catch (error) {

@@ -121,7 +121,6 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.cookie('access_token', access_token, {
             httpOnly: true,
             secure: true,
-            domain: vars_1.default.DOMAIN_FRONTEND,
             sameSite: 'none',
             maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE
         })
@@ -129,7 +128,6 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            domain: vars_1.default.DOMAIN_FRONTEND,
             maxAge: vars_1.default.REFRESH_TOKEN_MAX_AGE,
             path: '/'
         })
@@ -201,7 +199,6 @@ const handleRefreshToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            domain: vars_1.default.DOMAIN_FRONTEND,
             maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE
         }).json({ success: true, message: 'Token diperbarui' });
     }
