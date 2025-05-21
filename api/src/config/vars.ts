@@ -16,4 +16,6 @@ export default {
    LIMIT_PRODUCT: Number(process.env.LIMIT_PRODUCT) || 20,
    BASE_URL: (process.env.BASE_URL as string) || 'http://localhost:3100',
    FRONTEND_URL: process.env.FRONTEND_URL
+      ? JSON.parse(process.env.FRONTEND_URL)
+      : []
 }
