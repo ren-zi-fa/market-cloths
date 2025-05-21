@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.options = void 0;
+exports.swaggerOptions = void 0;
 const path_1 = __importDefault(require("path"));
 const vars_1 = __importDefault(require("../config/vars"));
-exports.options = {
+exports.swaggerOptions = {
     definition: {
         openapi: '3.0.0',
         info: {
@@ -16,10 +16,11 @@ exports.options = {
         },
         servers: [
             {
-                url: vars_1.default.BASE_URL,
-                description: 'Market cloths  Documentation'
+                url: vars_1.default.BASE_URL // Ganti port jika berbeda
             }
         ]
     },
-    apis: [path_1.default.join(__dirname, '../router/*.js')]
+    apis: [
+        path_1.default.join(__dirname, '../router/*.js') // Scan semua router untuk swagger doc
+    ]
 };

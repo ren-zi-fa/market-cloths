@@ -8,11 +8,11 @@ const path_1 = __importDefault(require("path"));
 const express_1 = __importDefault(require("express"));
 const router_1 = require("../router");
 const cors_1 = __importDefault(require("cors"));
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const notFoundMiddleware_1 = require("../middlewares/notFoundMiddleware");
 const errorMiddleware_1 = require("../middlewares/errorMiddleware");
 const swagger_1 = require("../swagger/swagger");
-const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const app = (0, express_1.default)();
 exports.app = app;
@@ -23,9 +23,8 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 const allowedOrigins = [
     'http://localhost:3000',
-    'https://market-cloths-zy.vercel.app'
+    'https://market-cloths.vercel.app'
 ];
-const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 const corsOptions = {
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
@@ -38,12 +37,12 @@ const corsOptions = {
     credentials: true
 };
 app.use((0, cors_1.default)(corsOptions));
-const specs = (0, swagger_jsdoc_1.default)(swagger_1.options);
-app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs, { customCssUrl: CSS_URL }));
 app.get('/', (req, res) => {
     res.json({ message: 'api is ok' });
 });
 app.use('/api', router_1.router);
+const specs = (0, swagger_jsdoc_1.default)(swagger_1.swaggerOptions);
+app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs));
 // Not found & error handler harus di bawah semua route
 app.use(notFoundMiddleware_1.notFoundMiddleware);
 app.use(errorMiddleware_1.errorMiddleware);

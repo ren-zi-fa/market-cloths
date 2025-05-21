@@ -4,7 +4,7 @@ import { Express } from 'express'
 import path from 'path'
 import vars from '../config/vars'
 
-export const options = {
+export const swaggerOptions = {
    definition: {
       openapi: '3.0.0',
       info: {
@@ -14,10 +14,14 @@ export const options = {
       },
       servers: [
          {
-            url: vars.BASE_URL,
-            description: 'Market cloths  Documentation'
+            url: vars.BASE_URL // Ganti port jika berbeda
          }
       ]
    },
-   apis: [path.join(__dirname, '../router/*.ts')]
+   apis: [
+      path.join(__dirname, '../router/*.ts') // Scan semua router untuk swagger doc
+   ]
 }
+
+
+
