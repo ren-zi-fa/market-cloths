@@ -119,13 +119,13 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const refresh_token = node_crypto_1.default.randomBytes(32).toString('hex');
         yield (0, userService_1.saveRefreshToken)(refresh_token, userId);
         res.cookie('access_token', access_token, {
-            httpOnly: true,
+            httpOnly: false,
             secure: false,
             sameSite: 'lax',
             maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE
         })
             .cookie('refresh_token', refresh_token, {
-            httpOnly: true,
+            httpOnly: false,
             secure: false,
             sameSite: 'lax',
             maxAge: vars_1.default.REFRESH_TOKEN_MAX_AGE
@@ -195,7 +195,7 @@ const handleRefreshToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
             role: user === null || user === void 0 ? void 0 : user.role
         }, JWT_SECRET, { expiresIn: '15m' });
         res.cookie('access_token', access_token, {
-            httpOnly: true,
+            httpOnly: false,
             secure: false,
             sameSite: 'lax',
             maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE

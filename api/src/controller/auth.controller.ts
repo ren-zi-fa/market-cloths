@@ -119,13 +119,13 @@ const handleLogin = async (req: Request, res: Response) => {
 
       await saveRefreshToken(refresh_token, userId)
       res.cookie('access_token', access_token, {
-         httpOnly: true,
+         httpOnly: false,
          secure: false,
          sameSite: 'lax',
          maxAge: vars.ACCESS_TOKEN_MAX_AGE
       })
          .cookie('refresh_token', refresh_token, {
-            httpOnly: true,
+            httpOnly: false,
             secure: false,
             sameSite: 'lax',
             maxAge: vars.REFRESH_TOKEN_MAX_AGE
@@ -196,7 +196,7 @@ const handleRefreshToken = async (req: Request, res: Response) => {
          { expiresIn: '15m' }
       )
       res.cookie('access_token', access_token, {
-         httpOnly: true,
+         httpOnly: false,
          secure: false,
          sameSite: 'lax',
          maxAge: vars.ACCESS_TOKEN_MAX_AGE
