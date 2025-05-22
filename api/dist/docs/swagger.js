@@ -12,7 +12,14 @@ exports.swaggerOptions = {
         info: {
             title: 'Market Cloths API',
             version: '1.0.0',
-            description: 'API documentation for Market Cloths'
+            description: `API documentation for Market Cloths.
+
+**CORS Policy:**
+
+This REST API is only accessible from the following origins:
+- http://localhost:3000
+- https://market-clozy.vercel.app/
+- https://market-cloths.vercel.app/`
         },
         servers: [
             {

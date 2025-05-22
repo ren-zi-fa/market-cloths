@@ -3,7 +3,7 @@
     "info": {
         "title": "Market Cloths API",
         "version": "1.0.0",
-        "description": "API documentation for Market Cloths"
+        "description": "API documentation for Market Cloths.\n\n**CORS Policy:**\n\nThis REST API is only accessible from the following origins:\n- http://localhost:3000\n- https://market-clozy.vercel.app/\n- https://market-cloths.vercel.app/"
     },
     "servers": [
         {
