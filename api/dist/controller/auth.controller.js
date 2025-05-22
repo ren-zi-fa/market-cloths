@@ -111,27 +111,12 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const existingValidToken = yield (0, userService_1.checkRefreshToken)(userId);
         if (existingValidToken) {
             yield (0, userService_1.deleteRefreshToken)(userId, false);
-            console.log('Refresh token yang direvoke telah dihapus.');
-        }
-        else {
-            console.log('Tidak ada refresh token yang direvoke.');
         }
         const refresh_token = node_crypto_1.default.randomBytes(32).toString('hex');
         yield (0, userService_1.saveRefreshToken)(refresh_token, userId);
-        res.cookie('access_token', access_token, {
-            httpOnly: false,
-            secure: true,
-            sameSite: 'none',
-            path: '/',
-            maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE
-        })
-            .cookie('refresh_token', refresh_token, {
-            httpOnly: false,
-            secure: true,
-            sameSite: 'none',
-            path: '/',
-            maxAge: vars_1.default.REFRESH_TOKEN_MAX_AGE
-        })
+        res.set('access_token', access_token)
+            .set('refresh_token', refresh_token)
+            .set('Access-Control-Expose-Headers', 'access_token, refresh_token')
             .json({
             success: true,
             message: 'Login berhasil'
@@ -147,17 +132,18 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.handleLogin = handleLogin;
 const handleLogout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
-        const refresh_token = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.refresh_token;
+        // Ambil token dari header Authorization
+        const authHeader = req.headers['authorization'];
+        const refresh_token = authHeader && authHeader.startsWith('Bearer ')
+            ? authHeader.split(' ')[1]
+            : null;
         if (!refresh_token) {
             res.status(400).json({ message: 'Refresh token tidak ditemukan' });
             return;
         }
         yield (0, userService_1.revokeRefreshToken)(refresh_token);
-        res.clearCookie('refresh_token')
-            .clearCookie('access_token')
-            .json({ message: 'Logout berhasil' });
+        res.json({ message: 'Logout berhasil' });
     }
     catch (error) {
         res.status(500).json({
@@ -168,9 +154,11 @@ const handleLogout = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.handleLogout = handleLogout;
 const handleRefreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
-        const refresh_token = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.refresh_token;
+        const authHeader = req.headers['authorization'];
+        const refresh_token = authHeader && authHeader.startsWith('Bearer ')
+            ? authHeader.split(' ')[1]
+            : null;
         if (!refresh_token) {
             res.status(400).json({ message: 'Refresh token tidak ditemukan' });
             return;
@@ -196,13 +184,12 @@ const handleRefreshToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
             tokenType: 'access',
             role: user === null || user === void 0 ? void 0 : user.role
         }, JWT_SECRET, { expiresIn: '15m' });
-        res.cookie('access_token', access_token, {
-            httpOnly: false,
-            secure: true,
-            sameSite: 'none',
-            path: '/',
-            maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE
-        }).json({ success: true, message: 'Token diperbarui' });
+        res.set('access_token', access_token)
+            .set('Access-Control-Expose-Headers', 'access_token, refresh_token')
+            .json({
+            success: true,
+            message: 'Token diperbarui'
+        });
     }
     catch (error) {
         res.status(500).json({
@@ -213,9 +200,12 @@ const handleRefreshToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.handleRefreshToken = handleRefreshToken;
 const handleProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
-        const token = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.access_token;
+        // Ambil token dari header, misal: Authorization: Bearer <token>
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.startsWith('Bearer ')
+            ? authHeader.slice(7)
+            : undefined;
         if (!token) {
             res.status(401).json({ message: 'Unauthorized' });
             return;
@@ -225,7 +215,7 @@ const handleProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         try {
             payload = jsonwebtoken_1.default.verify(token, JWT_SECRET);
         }
-        catch (_b) {
+        catch (_a) {
             res.status(401).json({ message: 'Unauthorized' });
             return;
         }

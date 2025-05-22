@@ -110,28 +110,14 @@ const handleLogin = async (req: Request, res: Response) => {
 
       if (existingValidToken) {
          await deleteRefreshToken(userId, false)
-         console.log('Refresh token yang direvoke telah dihapus.')
-      } else {
-         console.log('Tidak ada refresh token yang direvoke.')
       }
 
       const refresh_token = crypto.randomBytes(32).toString('hex')
 
       await saveRefreshToken(refresh_token, userId)
-      res.cookie('access_token', access_token, {
-         httpOnly: false,
-         secure: true,
-         sameSite: 'none',
-         path: '/',
-         maxAge: vars.ACCESS_TOKEN_MAX_AGE
-      })
-         .cookie('refresh_token', refresh_token, {
-            httpOnly: false,
-            secure: true,
-            sameSite: 'none',
-            path: '/',
-            maxAge: vars.REFRESH_TOKEN_MAX_AGE
-         })
+      res.set('access_token', access_token)
+         .set('refresh_token', refresh_token)
+         .set('Access-Control-Expose-Headers', 'access_token, refresh_token')
          .json({
             success: true,
             message: 'Login berhasil'
@@ -147,15 +133,21 @@ const handleLogin = async (req: Request, res: Response) => {
 
 const handleLogout = async (req: Request, res: Response) => {
    try {
-      const refresh_token = req.cookies?.refresh_token
+      // Ambil token dari header Authorization
+      const authHeader = req.headers['authorization']
+      const refresh_token =
+         authHeader && authHeader.startsWith('Bearer ')
+            ? authHeader.split(' ')[1]
+            : null
+
       if (!refresh_token) {
          res.status(400).json({ message: 'Refresh token tidak ditemukan' })
          return
       }
+
       await revokeRefreshToken(refresh_token)
-      res.clearCookie('refresh_token')
-         .clearCookie('access_token')
-         .json({ message: 'Logout berhasil' })
+
+      res.json({ message: 'Logout berhasil' })
    } catch (error) {
       res.status(500).json({
          message: 'Gagal logout',
@@ -166,11 +158,16 @@ const handleLogout = async (req: Request, res: Response) => {
 
 const handleRefreshToken = async (req: Request, res: Response) => {
    try {
-      const refresh_token = req.cookies?.refresh_token
+      const authHeader = req.headers['authorization']
+      const refresh_token =
+         authHeader && authHeader.startsWith('Bearer ')
+            ? authHeader.split(' ')[1]
+            : null
       if (!refresh_token) {
          res.status(400).json({ message: 'Refresh token tidak ditemukan' })
          return
       }
+
       const tokenData = await findValidRefreshToken(refresh_token)
       if (!tokenData) {
          res.status(401).json({
@@ -184,8 +181,10 @@ const handleRefreshToken = async (req: Request, res: Response) => {
          res.status(404).json({ message: 'User tidak ditemukan' })
          return
       }
+
       const { userId, user } = found
       const JWT_SECRET = vars.JWT_SECRET as string
+
       const access_token = jwt.sign(
          {
             userId,
@@ -197,13 +196,13 @@ const handleRefreshToken = async (req: Request, res: Response) => {
          JWT_SECRET,
          { expiresIn: '15m' }
       )
-      res.cookie('access_token', access_token, {
-         httpOnly: false,
-         secure: true,
-         sameSite: 'none',
-         path: '/',
-         maxAge: vars.ACCESS_TOKEN_MAX_AGE
-      }).json({ success: true, message: 'Token diperbarui' })
+
+      res.set('access_token', access_token)
+         .set('Access-Control-Expose-Headers', 'access_token, refresh_token')
+         .json({
+            success: true,
+            message: 'Token diperbarui'
+         })
    } catch (error) {
       res.status(500).json({
          message: 'Gagal refresh token',
@@ -214,11 +213,19 @@ const handleRefreshToken = async (req: Request, res: Response) => {
 
 const handleProfile = async (req: Request, res: Response) => {
    try {
-      const token = req.cookies?.access_token
+      // Ambil token dari header, misal: Authorization: Bearer <token>
+      const authHeader = req.headers['authorization']
+
+      const token =
+         authHeader && authHeader.startsWith('Bearer ')
+            ? authHeader.slice(7)
+            : undefined
+
       if (!token) {
          res.status(401).json({ message: 'Unauthorized' })
          return
       }
+
       const JWT_SECRET = vars.JWT_SECRET as string
       let payload: JwtPayload | string
       try {

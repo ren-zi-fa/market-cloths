@@ -29,11 +29,14 @@ import { authController } from '../controller'
  *       200:
  *         description: Login berhasil
  *         headers:
- *           Set-Cookie:
- *             description: Cookie untuk access_token dan refresh_token
+ *           access_token:
+ *             description: JWT akses token, kirim di header Authorization pada request berikutnya
  *             schema:
  *               type: string
- *             example: access_token=xxx; Path=/; HttpOnly; Secure; SameSite=None
+ *           refresh_token:
+ *             description: JWT refresh token, gunakan untuk refresh token
+ *             schema:
+ *               type: string
  *         content:
  *           application/json:
  *             schema:
@@ -68,6 +71,7 @@ import { authController } from '../controller'
  *                 error:
  *                   type: string
  */
+
 const router = Router()
 router.post(
    '/login',
@@ -102,6 +106,13 @@ router.post('/register', registerValidation, authController.handleRegister)
  *   post:
  *     summary: Logout user
  *     tags: [Auth]
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 'Refresh token dalam format Bearer. Contoh: "Bearer [refresh_token]"'
  *     responses:
  *       200:
  *         description: Logout berhasil
@@ -144,15 +155,21 @@ router.post('/logout', authController.handleLogout)
  *   post:
  *     summary: Refresh token JWT
  *     tags: [Auth]
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 'Refresh token dalam format Bearer. Contoh: "Bearer [refresh_token]"'
  *     responses:
  *       200:
  *         description: Token berhasil diperbarui
  *         headers:
- *           Set-Cookie:
- *             description: Cookie untuk access_token
+ *           access_token:
+ *             description: JWT akses token baru, kirim di header Authorization pada request berikutnya
  *             schema:
  *               type: string
- *             example: access_token=xxx; Path=/; HttpOnly; Secure; SameSite=None
  *         content:
  *           application/json:
  *             schema:
@@ -208,21 +225,65 @@ router.post('/logout', authController.handleLogout)
  *                   type: string
  */
 router.post('/refresh-token', authController.handleRefreshToken)
-
 /**
  * @swagger
  * /api/auth/profile:
  *   get:
  *     summary: Mendapatkan profil user
  *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         description: "Token JWT akses dalam format Bearer. Contoh: \"Bearer [access_token]\""
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Data profil user
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized (token tidak valid atau tidak dikirim)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *       404:
+ *         description: User tidak ditemukan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User tidak ditemukan
+ *       500:
+ *         description: Gagal mengambil profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Gagal mengambil profile
+ *                 error:
+ *                   type: string
  */
+
 router.get('/profile', authController.handleProfile)
 
 /**
@@ -270,6 +331,11 @@ router.get('/profile', authController.handleProfile)
  *           type: string
  *         username:
  *           type: string
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 export default router
