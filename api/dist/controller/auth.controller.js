@@ -122,15 +122,13 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             httpOnly: true,
             secure: false,
             sameSite: 'lax',
-            maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE,
-            path: '/'
+            maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE
         })
             .cookie('refresh_token', refresh_token, {
             httpOnly: true,
             secure: false,
             sameSite: 'lax',
-            maxAge: vars_1.default.REFRESH_TOKEN_MAX_AGE,
-            path: '/'
+            maxAge: vars_1.default.REFRESH_TOKEN_MAX_AGE
         })
             .json({
             success: true,

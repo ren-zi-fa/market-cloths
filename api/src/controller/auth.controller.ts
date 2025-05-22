@@ -122,15 +122,13 @@ const handleLogin = async (req: Request, res: Response) => {
          httpOnly: true,
          secure: false,
          sameSite: 'lax',
-         maxAge: vars.ACCESS_TOKEN_MAX_AGE,
-         path: '/'
+         maxAge: vars.ACCESS_TOKEN_MAX_AGE
       })
          .cookie('refresh_token', refresh_token, {
             httpOnly: true,
             secure: false,
             sameSite: 'lax',
-            maxAge: vars.REFRESH_TOKEN_MAX_AGE,
-            path: '/'
+            maxAge: vars.REFRESH_TOKEN_MAX_AGE
          })
          .json({
             success: true,
