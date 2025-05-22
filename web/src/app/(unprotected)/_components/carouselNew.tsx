@@ -22,14 +22,13 @@ export default function CarouselProductNew({ data }: { data: Iproduct[] }) {
    const { user } = useProfile()
    const router = useRouter()
    const { addToCart } = useCart()
-
-   const handleAddToCart = (item: Iproduct) => {
-      if (!user) {
-         return router.push('/auth/login')
-      }
+   const handleCart = (
+      item: Iproduct,
+      e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+   ) => {
+      e.preventDefault()
       addToCart(item)
    }
-
    return (
       <div className="w-full px-4 py-6">
          <Carousel
@@ -77,7 +76,7 @@ export default function CarouselProductNew({ data }: { data: Iproduct[] }) {
                               <Button
                                  size="sm"
                                  className="w-full  mt-1 md:mt-0"
-                                 onClick={() => handleAddToCart(item)}
+                                 onClick={(e) => handleCart(item, e)}
                               >
                                  <Plus className="mr-2 h-4 w-4" /> Add
                               </Button>

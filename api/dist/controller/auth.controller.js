@@ -122,7 +122,8 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE
+            maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE,
+            path: '/'
         })
             .cookie('refresh_token', refresh_token, {
             httpOnly: true,

@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function middleware(request: NextRequest) {
    const refreshToken = request.cookies.get('refresh_token')
 
-   
 
    // Jika tidak ada refresh_token dan akses halaman protected, redirect ke login
    if (

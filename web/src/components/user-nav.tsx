@@ -1,3 +1,4 @@
+'use client'
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -9,6 +10,8 @@ import {
 import { User } from '@/types'
 import { UserRound } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from './ui/button'
+import { useRouter } from 'next/navigation'
 
 type UserProps = Omit<User, 'tokenType'>
 interface UserNavProps {
@@ -17,10 +20,11 @@ interface UserNavProps {
    onLogout: () => void
 }
 export default function UserNav({ user, loading, onLogout }: UserNavProps) {
+   const router = useRouter()
    return (
-      <div className="">
+      <div className="w-full">
          <DropdownMenu>
-            <DropdownMenuTrigger className="flex">
+            <DropdownMenuTrigger className="flex items-center">
                <UserRound />
                {user ? user.username.slice(0, 3) : 'Guest'}
             </DropdownMenuTrigger>
@@ -36,7 +40,12 @@ export default function UserNav({ user, loading, onLogout }: UserNavProps) {
                   {loading ? (
                      'Loading...'
                   ) : user && user.role === 'admin' ? (
-                     <Link href="/dashboard">Dashboard</Link>
+                     <Button
+                        onClick={() => router.push('/dashboard')}
+                        className="w-full"
+                     >
+                        Dashboard
+                     </Button>
                   ) : null}
                </DropdownMenuLabel>
                <DropdownMenuSeparator />
@@ -49,7 +58,12 @@ export default function UserNav({ user, loading, onLogout }: UserNavProps) {
                   </>
                ) : (
                   <DropdownMenuItem asChild>
-                     <Link href="/auth/login">Login</Link>
+                     <Button
+                        onClick={() => router.push('/auth/login')}
+                        className="w-full"
+                     >
+                        Login
+                     </Button>
                   </DropdownMenuItem>
                )}
             </DropdownMenuContent>
