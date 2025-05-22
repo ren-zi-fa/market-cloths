@@ -8,6 +8,9 @@
   "servers": [
     {
       "url": "https://market-cloths.vercel.app"
+    },
+    {
+      "url": "http://localhost:3100"
     }
   ],
   "paths": {
@@ -29,10 +32,68 @@
         },
         "responses": {
           "200": {
-            "description": "Login berhasil"
+            "description": "Login berhasil",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Cookie untuk access_token dan refresh_token",
+                "schema": {
+                  "type": "string"
+                },
+                "example": "access_token=xxx; Path=/; HttpOnly; Secure; SameSite=None"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Login berhasil"
+                    }
+                  }
+                }
+              }
+            }
           },
-          "401": {
-            "description": "Login gagal"
+          "400": {
+            "description": "Username/email tidak ditemukan atau password salah",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Username atau email tidak ditemukan"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Terjadi kesalahan pada server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Terjadi kesalahan pada server"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -71,7 +132,55 @@
         ],
         "responses": {
           "200": {
-            "description": "Logout berhasil"
+            "description": "Logout berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Logout berhasil"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Refresh token tidak ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Refresh token tidak ditemukan"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Gagal logout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Gagal logout"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -84,7 +193,100 @@
         ],
         "responses": {
           "200": {
-            "description": "Token berhasil diperbarui"
+            "description": "Token berhasil diperbarui",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Cookie untuk access_token",
+                "schema": {
+                  "type": "string"
+                },
+                "example": "access_token=xxx; Path=/; HttpOnly; Secure; SameSite=None"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Token diperbarui"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Refresh token tidak ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Refresh token tidak ditemukan"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Refresh token tidak valid atau sudah kadaluarsa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Refresh token tidak valid atau sudah kadaluarsa"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User tidak ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User tidak ditemukan"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Gagal refresh token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Gagal refresh token"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -173,7 +375,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "ids": {
+                  "categoryIds": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -191,21 +393,21 @@
         }
       }
     },
-    "/api/categories/{id}": {
+    "/api/categories/{categoryId}": {
       "get": {
-        "summary": "Mendapatkan detail kategori berdasarkan ID",
+        "summary": "Mendapatkan detail kategori berdasarkan categoryId",
         "tags": [
           "Category"
         ],
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "categoryId",
             "schema": {
               "type": "string"
             },
             "required": true,
-            "description": "ID kategori"
+            "description": "categoryId kategori"
           }
         ],
         "responses": {
@@ -222,19 +424,19 @@
         }
       },
       "put": {
-        "summary": "Memperbarui kategori berdasarkan ID",
+        "summary": "Memperbarui kategori berdasarkan categoryId",
         "tags": [
           "Category"
         ],
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "categoryId",
             "schema": {
               "type": "string"
             },
             "required": true,
-            "description": "ID kategori"
+            "description": "categoryId kategori"
           }
         ],
         "requestBody": {
@@ -254,19 +456,19 @@
         }
       },
       "delete": {
-        "summary": "Menghapus kategori berdasarkan ID",
+        "summary": "Menghapus kategori berdasarkan categoryId",
         "tags": [
           "Category"
         ],
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "categoryId",
             "schema": {
               "type": "string"
             },
             "required": true,
-            "description": "ID kategori"
+            "description": "categoryId kategori"
           }
         ],
         "responses": {
@@ -402,7 +604,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "ids": {
+                  "productsId": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -427,21 +629,21 @@
         }
       }
     },
-    "/api/products/{id}": {
+    "/api/products/{productId}": {
       "get": {
-        "summary": "Mendapatkan detail produk berdasarkan ID",
+        "summary": "Mendapatkan detail produk berdasarkan productId",
         "tags": [
           "Products"
         ],
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "productId",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "ID produk"
+            "description": "productId produk"
           }
         ],
         "responses": {
@@ -461,19 +663,19 @@
         }
       },
       "put": {
-        "summary": "Memperbarui data produk berdasarkan ID",
+        "summary": "Memperbarui data produk berdasarkan productId",
         "tags": [
           "Products"
         ],
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "productId",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "ID produk"
+            "description": "productId produk"
           }
         ],
         "requestBody": {
@@ -506,19 +708,19 @@
         }
       },
       "delete": {
-        "summary": "Menghapus produk berdasarkan ID",
+        "summary": "Menghapus produk berdasarkan productId",
         "tags": [
           "Products"
         ],
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "productId",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "ID produk"
+            "description": "productId produk"
           }
         ],
         "responses": {
@@ -547,15 +749,34 @@
       },
       "RegisterInput": {
         "type": "object",
+        "required": [
+          "username",
+          "email",
+          "password",
+          "konfirmasi_password",
+          "makanan_favorite"
+        ],
         "properties": {
-          "email": {
-            "type": "string"
-          },
           "username": {
-            "type": "string"
+            "type": "string",
+            "example": "johndoe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "johndoe@email.com"
           },
           "password": {
-            "type": "string"
+            "type": "string",
+            "example": "password123"
+          },
+          "konfirmasi_password": {
+            "type": "string",
+            "example": "password123"
+          },
+          "makanan_favorite": {
+            "type": "string",
+            "example": "Nasi Goreng"
           }
         }
       },
@@ -576,7 +797,7 @@
       "Category": {
         "type": "object",
         "properties": {
-          "id": {
+          "categoryId": {
             "type": "string"
           },
           "name": {
@@ -601,7 +822,7 @@
       "Product": {
         "type": "object",
         "properties": {
-          "id": {
+          "productId": {
             "type": "string",
             "example": "664a1b2c3d4e5f6a7b8c9d0e"
           },
@@ -634,11 +855,6 @@
           "category_name": {
             "type": "string",
             "example": "Kaos"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2024-05-20T12:34:56.789Z"
           }
         }
       },

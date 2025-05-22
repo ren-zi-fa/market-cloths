@@ -66,29 +66,43 @@ const handleGetProductById = async (req: Request, res: Response) => {
       })
       return
    }
-   const id = req.params.id
+
+   const productId = req.params.productId
+
+   if (!productId || typeof productId !== 'string' || !productId.trim()) {
+      res.status(400).json({
+         success: false,
+         message: 'Invalid productId'
+      })
+      return
+   }
+
    try {
-      const data = await getProductById(id)
+      const data = await getProductById(productId)
       if (!data) {
          res.status(404).json({
             success: false,
-            message: `product with id ${id} not found`
+            message: `Product with id ${productId} not found`
          })
          return
       }
       res.status(200).json({
          success: true,
-         message: 'product found',
+         message: 'Product found',
          data
       })
+      return
    } catch (error) {
+      console.error('Get product by id error:', error)
       res.status(500).json({
          success: false,
          message: 'Internal server error',
          error: error instanceof Error ? error.message : String(error)
       })
+      return
    }
 }
+
 const handleCreateProduct = async (req: Request, res: Response) => {
    const errors = validationResult(req)
    if (!errors.isEmpty()) {
@@ -175,7 +189,7 @@ const handleDeleteproduct = async (req: Request, res: Response) => {
          return
       }
 
-      const productId = req.params.id
+      const productId = req.params.productId
 
       const deleted = await deleteProductByid(productId)
 
@@ -210,7 +224,7 @@ const handleUpdateProduct = async (req: Request, res: Response) => {
       return
    }
 
-   const id = req.params.id
+   const id = req.params.productId
    const data = matchedData(req)
 
    // Validasi: minimal salah satu dari name, description, price, stok, atau image_url harus ada

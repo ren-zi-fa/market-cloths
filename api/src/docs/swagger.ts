@@ -1,4 +1,3 @@
-
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import { Express } from 'express'
@@ -16,10 +15,11 @@ export const swaggerOptions = {
       servers: [
          {
             url: vars.BASE_URL
+         },
+         {
+            url: 'http://localhost:3100' 
          }
       ]
    },
-   apis: [
-      path.join(__dirname, '../router/*.{ts,js}') 
-   ]
+   apis: [path.join(__dirname, '../router/*.{ts,js}')]
 }

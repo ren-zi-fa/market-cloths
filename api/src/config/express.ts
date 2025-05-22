@@ -2,11 +2,9 @@ import path from 'path'
 import express from 'express'
 import { router } from '../router'
 import cors from 'cors'
-import swaggerUi from 'swagger-ui-express'
 import cookieParser from 'cookie-parser'
 import { notFoundMiddleware } from '../middlewares/notFoundMiddleware'
 import { errorMiddleware } from '../middlewares/errorMiddleware'
-import swaggerJSDoc from 'swagger-jsdoc'
 import docs from '../docs/route'
 import vars from './vars'
 const app = express()
@@ -16,8 +14,9 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 const allowedOrigins = [
-   ...vars.FRONTEND_URL, 
-   'http://localhost:3000'
+   ...vars.FRONTEND_URL,
+   'http://localhost:3000',
+   'http://localhost:3100'
 ].filter(Boolean)
 
 const corsOptions = {

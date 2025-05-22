@@ -28,8 +28,45 @@ import { authController } from '../controller'
  *     responses:
  *       200:
  *         description: Login berhasil
- *       401:
- *         description: Login gagal
+ *         headers:
+ *           Set-Cookie:
+ *             description: Cookie untuk access_token dan refresh_token
+ *             schema:
+ *               type: string
+ *             example: access_token=xxx; Path=/; HttpOnly; Secure; SameSite=None
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Login berhasil
+ *       400:
+ *         description: Username/email tidak ditemukan atau password salah
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Username atau email tidak ditemukan
+ *       500:
+ *         description: Terjadi kesalahan pada server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Terjadi kesalahan pada server
+ *                 error:
+ *                   type: string
  */
 const router = Router()
 router.post(
@@ -68,6 +105,36 @@ router.post('/register', registerValidation, authController.handleRegister)
  *     responses:
  *       200:
  *         description: Logout berhasil
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Logout berhasil
+ *       400:
+ *         description: Refresh token tidak ditemukan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Refresh token tidak ditemukan
+ *       500:
+ *         description: Gagal logout
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Gagal logout
+ *                 error:
+ *                   type: string
  */
 router.post('/logout', authController.handleLogout)
 
@@ -80,6 +147,65 @@ router.post('/logout', authController.handleLogout)
  *     responses:
  *       200:
  *         description: Token berhasil diperbarui
+ *         headers:
+ *           Set-Cookie:
+ *             description: Cookie untuk access_token
+ *             schema:
+ *               type: string
+ *             example: access_token=xxx; Path=/; HttpOnly; Secure; SameSite=None
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Token diperbarui
+ *       400:
+ *         description: Refresh token tidak ditemukan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Refresh token tidak ditemukan
+ *       401:
+ *         description: Refresh token tidak valid atau sudah kadaluarsa
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Refresh token tidak valid atau sudah kadaluarsa
+ *       404:
+ *         description: User tidak ditemukan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User tidak ditemukan
+ *       500:
+ *         description: Gagal refresh token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Gagal refresh token
+ *                 error:
+ *                   type: string
  */
 router.post('/refresh-token', authController.handleRefreshToken)
 
@@ -97,7 +223,7 @@ router.post('/refresh-token', authController.handleRefreshToken)
  *             schema:
  *               $ref: '#/components/schemas/User'
  */
-router.get('/profile', authController.hadnleProfile)
+router.get('/profile', authController.handleProfile)
 
 /**
  * @swagger
@@ -112,13 +238,29 @@ router.get('/profile', authController.hadnleProfile)
  *           type: string
  *     RegisterInput:
  *       type: object
+ *       required:
+ *         - username
+ *         - email
+ *         - password
+ *         - konfirmasi_password
+ *         - makanan_favorite
  *       properties:
- *         email:
- *           type: string
  *         username:
  *           type: string
+ *           example: johndoe
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: johndoe@email.com
  *         password:
  *           type: string
+ *           example: password123
+ *         konfirmasi_password:
+ *           type: string
+ *           example: password123
+ *         makanan_favorite:
+ *           type: string
+ *           example: Nasi Goreng
  *     User:
  *       type: object
  *       properties:

@@ -70,7 +70,7 @@ const handleDeleteCategory = async (req: Request, res: Response) => {
          return
       }
 
-      const categoryId = req.params.id
+      const categoryId = req.params.categoryId
 
       const deleted = await deleteCategoryById(categoryId)
 
@@ -106,9 +106,9 @@ const handleBulkDeleteCategory = async (req: Request, res: Response) => {
    }
 
    try {
-      const { ids } = req.body
+      const { categoriesId } = req.body
 
-      const result = await deleteCategoryByIds(ids)
+      const result = await deleteCategoryByIds(categoriesId)
 
       if (result.notFoundIds.length > 0) {
          res.status(400).json({
@@ -143,13 +143,13 @@ const handleGetCategoryId = async (req: Request, res: Response) => {
       })
       return
    }
-   const id = req.params.id
+   const categoryId = req.params.categoryId
    try {
-      const data = await getCategoryById(id)
+      const data = await getCategoryById(categoryId)
       if (!data) {
          res.status(404).json({
             success: false,
-            message: `Category with id ${id} not found`
+            message: `Category with id ${categoryId} not found`
          })
          return
       }
@@ -177,7 +177,7 @@ const handleUpdateCategory = async (req: Request, res: Response) => {
       return
    }
 
-   const id = req.params.id
+   const categoryId = req.params.categoryId
    const data = matchedData(req)
 
    // Validasi: minimal salah satu dari name atau description harus ada
@@ -190,7 +190,7 @@ const handleUpdateCategory = async (req: Request, res: Response) => {
    }
 
    try {
-      const updated = await updateCategoryById(id, data)
+      const updated = await updateCategoryById(categoryId, data)
       if (!updated) {
          res.status(404).json({
             success: false,

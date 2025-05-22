@@ -62,7 +62,7 @@ router
  *           schema:
  *             type: object
  *             properties:
- *               ids:
+ *               categoryIds:
  *                 type: array
  *                 items:
  *                   type: string
@@ -74,30 +74,32 @@ router
    .route('/categories/bulk-delete')
    .delete(
       [
-         body('ids')
+         body('categoriesId')
             .isArray({ min: 1 })
-            .withMessage('ids harus berupa array yang tidak kosong'),
-         body('ids.*')
+            .withMessage('categoriesId harus berupa array yang tidak kosong'),
+         body('categoriesId.*')
             .isString()
             .notEmpty()
-            .withMessage('Setiap id harus berupa string yang tidak kosong')
+            .withMessage(
+               'Setiap categoryId harus berupa string yang tidak kosong'
+            )
       ],
       categoryController.handleBulkDeleteCategory
    )
 
 /**
  * @swagger
- * /api/categories/{id}:
+ * /api/categories/{categoryId}:
  *   get:
- *     summary: Mendapatkan detail kategori berdasarkan ID
+ *     summary: Mendapatkan detail kategori berdasarkan categoryId
  *     tags: [Category]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: categoryId
  *         schema:
  *           type: string
  *         required: true
- *         description: ID kategori
+ *         description: categoryId kategori
  *     responses:
  *       200:
  *         description: Detail kategori
@@ -106,15 +108,15 @@ router
  *             schema:
  *               $ref: '#/components/schemas/Category'
  *   put:
- *     summary: Memperbarui kategori berdasarkan ID
+ *     summary: Memperbarui kategori berdasarkan categoryId
  *     tags: [Category]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: categoryId
  *         schema:
  *           type: string
  *         required: true
- *         description: ID kategori
+ *         description: categoryId kategori
  *     requestBody:
  *       required: true
  *       content:
@@ -125,38 +127,38 @@ router
  *       200:
  *         description: Kategori berhasil diperbarui
  *   delete:
- *     summary: Menghapus kategori berdasarkan ID
+ *     summary: Menghapus kategori berdasarkan categoryId
  *     tags: [Category]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: categoryId
  *         schema:
  *           type: string
  *         required: true
- *         description: ID kategori
+ *         description: categoryId kategori
  *     responses:
  *       200:
  *         description: Kategori berhasil dihapus
  */
 router
-   .route('/categories/:id')
+   .route('/categories/:categoryId')
    .get(
       [
-         param('id')
+         param('categoryId')
             .isString()
             .trim()
             .notEmpty()
-            .withMessage('ID tidak boleh kosong dan harus berupa string')
+            .withMessage('categoryId tidak boleh kosong dan harus berupa string')
       ],
       categoryController.handleGetCategoryId
    )
    .put(
       [
-         param('id')
+         param('categoryId')
             .isString()
             .trim()
             .notEmpty()
-            .withMessage('ID tidak boleh kosong dan harus berupa string'),
+            .withMessage('categoryId tidak boleh kosong dan harus berupa string'),
 
          body('name')
             .optional()
@@ -174,11 +176,11 @@ router
    )
    .delete(
       [
-         param('id')
+         param('categoryId')
             .isString()
-            .withMessage('ID harus berupa string')
+            .withMessage('categoryId harus berupa string')
             .notEmpty()
-            .withMessage('ID tidak boleh kosong')
+            .withMessage('categoryId tidak boleh kosong')
       ],
       categoryController.handleDeleteCategory
    )
@@ -190,7 +192,7 @@ router
  *     Category:
  *       type: object
  *       properties:
- *         id:
+ *         categoryId:
  *           type: string
  *         name:
  *           type: string

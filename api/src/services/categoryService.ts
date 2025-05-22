@@ -23,25 +23,34 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function deleteCategoryById(id: string): Promise<boolean> {
-   const docRef = db.collection('category').doc(id)
-   const doc = await docRef.get()
-
-   if (!doc.exists) {
+   if (!id || typeof id !== 'string' || !id.trim()) {
       return false
    }
 
-   await docRef.delete()
-   return true
+   try {
+      const docRef = db.collection('category').doc(id)
+      const doc = await docRef.get()
+
+      if (!doc.exists) {
+         return false
+      }
+
+      await docRef.delete()
+      return true
+   } catch (error) {
+      console.error('Error deleting category:', error)
+      return false
+   }
 }
 
 export async function deleteCategoryByIds(
-   ids: string[]
+   categoriesId: string[]
 ): Promise<{ deletedCount: number; notFoundIds: string[] }> {
    let deletedCount = 0
    const notFoundIds: string[] = []
    const batch = db.batch()
 
-   for (const id of ids) {
+   for (const id of categoriesId) {
       const docRef = db.collection('category').doc(id)
       const doc = await docRef.get()
       if (doc.exists) {

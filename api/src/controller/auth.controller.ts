@@ -128,7 +128,6 @@ const handleLogin = async (req: Request, res: Response) => {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-
             maxAge: vars.REFRESH_TOKEN_MAX_AGE,
             path: '/'
          })
@@ -211,7 +210,7 @@ const handleRefreshToken = async (req: Request, res: Response) => {
    }
 }
 
-const hadnleProfile = async (req: Request, res: Response) => {
+const handleProfile = async (req: Request, res: Response) => {
    try {
       const token = req.cookies?.access_token
       if (!token) {
@@ -253,5 +252,5 @@ export {
    handleLogin,
    handleLogout,
    handleRefreshToken,
-   hadnleProfile
+   handleProfile
 }

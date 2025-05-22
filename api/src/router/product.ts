@@ -112,7 +112,7 @@ router
  *           schema:
  *             type: object
  *             properties:
- *               ids:
+ *               productsId:
  *                 type: array
  *                 items:
  *                   type: string
@@ -127,30 +127,30 @@ router
    .route('/products/bulk-delete')
    .delete(
       [
-         body('ids')
+         body('productsId')
             .isArray({ min: 1 })
-            .withMessage('ids harus berupa array yang tidak kosong'),
-         body('ids.*')
+            .withMessage('productsId harus berupa array yang tidak kosong'),
+         body('productsId.*')
             .isString()
             .notEmpty()
-            .withMessage('Setiap id harus berupa string yang tidak kosong')
+            .withMessage('Setiap productsId harus berupa string yang tidak kosong')
       ],
       productController.handleBulkDeleteProducts
    )
 
 /**
  * @swagger
- * /api/products/{id}:
+ * /api/products/{productId}:
  *   get:
- *     summary: Mendapatkan detail produk berdasarkan ID
+ *     summary: Mendapatkan detail produk berdasarkan productId
  *     tags: [Products]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: productId
  *         required: true
  *         schema:
  *           type: string
- *         description: ID produk
+ *         description: productId produk
  *     responses:
  *       200:
  *         description: Detail produk
@@ -161,15 +161,15 @@ router
  *       404:
  *         description: Produk tidak ditemukan
  *   put:
- *     summary: Memperbarui data produk berdasarkan ID
+ *     summary: Memperbarui data produk berdasarkan productId
  *     tags: [Products]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: productId
  *         required: true
  *         schema:
  *           type: string
- *         description: ID produk
+ *         description: productId produk
  *     requestBody:
  *       required: true
  *       content:
@@ -188,15 +188,15 @@ router
  *       404:
  *         description: Produk tidak ditemukan
  *   delete:
- *     summary: Menghapus produk berdasarkan ID
+ *     summary: Menghapus produk berdasarkan productId
  *     tags: [Products]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: productId
  *         required: true
  *         schema:
  *           type: string
- *         description: ID produk
+ *         description: productId produk
  *     responses:
  *       200:
  *         description: Produk berhasil dihapus
@@ -204,24 +204,24 @@ router
  *         description: Produk tidak ditemukan
  */
 router
-   .route('/products/:id')
+   .route('/products/:productId')
    .get(
       [
-         param('id')
+         param('productId')
             .isString()
             .trim()
             .notEmpty()
-            .withMessage('ID tidak boleh kosong dan harus berupa string')
+            .withMessage('productId tidak boleh kosong dan harus berupa string')
       ],
       productController.handleGetProductById
    )
    .put(
       [
-         param('id')
+         param('productId')
             .isString()
             .trim()
             .notEmpty()
-            .withMessage('ID tidak boleh kosong dan harus berupa string'),
+            .withMessage('productId  tidak boleh kosong dan harus berupa string'),
 
          body('name')
             .optional()
@@ -256,11 +256,11 @@ router
    )
    .delete(
       [
-         param('id')
+         param('productId')
             .isString()
-            .withMessage('ID harus berupa string')
+            .withMessage('productId harus berupa string')
             .notEmpty()
-            .withMessage('ID tidak boleh kosong')
+            .withMessage('productId tidak boleh kosong')
       ],
       productController.handleDeleteproduct
    )
@@ -272,7 +272,7 @@ router
  *     Product:
  *       type: object
  *       properties:
- *         id:
+ *         productId :
  *           type: string
  *           example: "664a1b2c3d4e5f6a7b8c9d0e"
  *         name:
@@ -296,10 +296,6 @@ router
  *         category_name:
  *           type: string
  *           example: "Kaos"
- *         createdAt:
- *           type: string
- *           format: date-time
- *           example: "2024-05-20T12:34:56.789Z"
  *     ProductInput:
  *       type: object
  *       properties:
