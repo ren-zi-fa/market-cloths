@@ -14,6 +14,8 @@ interface User {
    email: string
    tokenType: string
    role: string
+   exp: number
+   iat: number
 }
 type FieldErrorMessage = {
    type: 'field'

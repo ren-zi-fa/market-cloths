@@ -20,11 +20,14 @@ import instance from '@/lib/axios'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useAuthStore } from '@/hooks/use-auth'
 
 type LoginInput = z.infer<typeof LoginSchema>
 
 export default function FormLogin() {
+   const { setAccessToken, setRefreshToken } = useAuthStore()
    const [showPassword, setShowPassword] = useState(false)
+   const [isLoading, setIsLoading] = useState(false) // Tambahkan state loading
    const router = useRouter()
    const form = useForm<LoginInput>({
       resolver: zodResolver(LoginSchema),
@@ -33,13 +36,19 @@ export default function FormLogin() {
          password: ''
       }
    })
-   const { setError } = form
-   const [loginError, setLoginError] = useState<string | null>('')
-   const onLogin = async (data: LoginInput) => {
-      try {
-         await instance.post('/api/auth/login', data)
 
-         router.replace('/')
+   const { setError } = form
+   type LoginErrorType = string | { msg?: string } | { msg?: string }[] | null
+   const [loginError, setLoginError] = useState<LoginErrorType>('')
+   const onLogin = async (data: LoginInput) => {
+      setIsLoading(true) // Set loading saat mulai login
+      try {
+         const response = await instance.post('/api/auth/login', data)
+         const accessToken = response.headers['access_token']
+         const refresh_token = response.headers['refresh_token']
+         setAccessToken(accessToken)
+         setRefreshToken(refresh_token)
+         router.push('/')
       } catch (err) {
          if (axios.isAxiosError(err)) {
             const messages = err.response?.data?.message
@@ -52,13 +61,22 @@ export default function FormLogin() {
                })
             }
          }
-         // Tidak ada redirect di sini, user tetap di halaman login
+      } finally {
+         setIsLoading(false) // Reset loading setelah login selesai
       }
    }
 
    useEffect(() => {
       if (loginError) {
-         toast.error(loginError)
+         if (typeof loginError === 'string') {
+            toast.error(loginError)
+         } else if (Array.isArray(loginError)) {
+            loginError.forEach((err) => {
+               if (err.msg) toast.error(err.msg)
+            })
+         } else if (typeof loginError === 'object' && loginError?.msg) {
+            toast.error(loginError.msg)
+         }
       }
    }, [loginError])
 
@@ -111,8 +129,8 @@ export default function FormLogin() {
                   </FormItem>
                )}
             />
-            <Button type="submit" className="w-full">
-               Login
+            <Button type="submit" className="w-full" disabled={isLoading}>
+               {isLoading ? 'Loading...' : 'Login'}
             </Button>
             <div className="text-center text-sm mt-2">
                Belum punya akun?{' '}

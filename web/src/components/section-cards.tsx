@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -10,13 +13,28 @@ import {
 } from '@/components/ui/card'
 import instance from '@/lib/axios'
 
-export async function SectionCards() {
-   const res = await instance.get('/api/users')
-   const productRes = await instance.get('/api/products')
-   const categoryRes = await instance.get('/api/categories')
-   const productData = productRes.data.pagination
-   const userData = res.data.data
-   const categoryData = categoryRes.data.data
+export function SectionCards() {
+   const [userData, setUserData] = useState<any[]>([])
+   const [productData, setProductData] = useState<{ totalItems: number }>({
+      totalItems: 0
+   })
+   const [categoryData, setCategoryData] = useState<any[]>([])
+
+   useEffect(() => {
+      async function fetchData() {
+         try {
+            const res = await instance.get('/api/users')
+            const productRes = await instance.get('/api/products')
+            const categoryRes = await instance.get('/api/categories')
+            setUserData(res.data.data)
+            setProductData(productRes.data.pagination)
+            setCategoryData(categoryRes.data.data)
+         } catch (err) {
+            console.log(err)
+         }
+      }
+      fetchData()
+   }, [])
 
    return (
       <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card lg:px-6">

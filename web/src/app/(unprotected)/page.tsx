@@ -1,21 +1,24 @@
+'use client'
+
 import SearchInput from '@/components/Home/SearchInput'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
-import { Metadata } from 'next'
 import Image from 'next/image'
-import instance from '@/lib/axios'
-import { Iproduct } from '@/types'
 import SectionBottom from './_components/section-bottom'
 import HomeView from './_components'
+import { useEffect, useState } from 'react'
+import { Iproduct } from '@/types'
+import instance from '@/lib/axios'
 
-export const metadata: Metadata = {
-   title: 'Home',
-   description: 'Home page'
-}
+export default function Home() {
+   const [newProduct, setProduct] = useState<Iproduct[] | null>(null)
+   useEffect(() => {
+      instance
+         .get('/api/products?limit=10')
+         .then((res) => setProduct(res.data.data))
+         .catch((e) => console.log(e))
+   }, [])
 
-export default async function Home() {
-   const { data } = await instance.get('/api/products?limit=8')
-   const newProduct: Iproduct[] = data.data
    return (
       <div className="flex flex-col gap-6 mt-10 px-4">
          <SearchInput />
@@ -62,7 +65,7 @@ export default async function Home() {
                New <br />
                This Week
             </h1>
-            <HomeView newProduct={newProduct} />
+            {newProduct && <HomeView newProduct={newProduct} />}
          </div>
          <div className="text-center space-y-2">
             <h1 className="md:text-5xl tracking-widest text-3xl">

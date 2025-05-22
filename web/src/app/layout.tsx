@@ -1,3 +1,4 @@
+
 import './globals.css'
 import { Toaster } from 'sonner'
 
@@ -9,8 +10,10 @@ export default function RootLayout({
    return (
       <html lang="en">
          <body>
-            <Toaster position='top-right' />
-            {children}
+         
+               <Toaster position="top-right" />
+               {children}
+          
          </body>
       </html>
    )

@@ -1,9 +1,22 @@
 import axios from 'axios'
+import jwt from 'jsonwebtoken'
 
 const instance = axios.create({
-   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
-   withCredentials: true
+   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL
 })
+
+// Fungsi helper untuk ambil token dari localStorage
+const getAccessToken = () => {
+   const token = localStorage.getItem('access_token')
+   return token
+}
+
+const getRefreshToken = () => {
+   const token = localStorage.getItem('refresh_token')
+   return token
+}
+const setAccessToken = (token: string) =>
+   localStorage.setItem('access_token', token)
 
 let isRefreshing = false
 let failedQueue: {
@@ -12,30 +25,66 @@ let failedQueue: {
 }[] = []
 
 const processQueue = (error: any, token: string | null = null) => {
-   failedQueue.forEach((prom) => {
+   failedQueue.forEach(({ resolve, reject }) => {
       if (error) {
-         prom.reject(error)
+         reject(error)
       } else {
-         prom.resolve(token)
+         resolve(token)
       }
    })
    failedQueue = []
 }
 
+instance.interceptors.request.use((config: any) => {
+   // Jangan override header Authorization kalau sudah ada (misal request refresh token)
+   const hasAuth =
+      config.headers['Authorization'] || config.headers['authorization']
+   if (!hasAuth) {
+      const token = getAccessToken()
+      if (token) {
+         config.headers['Authorization'] = `Bearer ${token}`
+      }
+   }
+   getRefreshToken()
+   return config
+})
+
 instance.interceptors.response.use(
-   (response) => response,
+   (response) => {
+      return response
+   },
    async (error) => {
       const originalRequest = error.config
 
       if (error.response?.status === 401 && !originalRequest._retry) {
          originalRequest._retry = true
 
+         const token = getAccessToken()
+         const jwtSecret = process.env.NEXT_PUBLIC_JWT_SECRET
+
+         let isExpired = true
+         if (token && jwtSecret) {
+            try {
+               jwt.verify(token, jwtSecret)
+               isExpired = false
+            } catch (err: any) {
+               if (err.name === 'TokenExpiredError') {
+                  isExpired = true
+               }
+            }
+         }
+
+         if (!isExpired) {
+            return Promise.reject(error)
+         }
+
          if (isRefreshing) {
             return new Promise((resolve, reject) => {
                failedQueue.push({ resolve, reject })
             })
-               .then((token) => {
-                  originalRequest.headers['Authorization'] = `Bearer ${token}`
+               .then((newToken) => {
+                  originalRequest.headers['Authorization'] =
+                     `Bearer ${newToken}`
                   return instance(originalRequest)
                })
                .catch((err) => Promise.reject(err))
@@ -44,10 +93,31 @@ instance.interceptors.response.use(
          isRefreshing = true
 
          try {
-            await instance.post('/api/auth/refresh-token')
+            const refreshToken = getRefreshToken()
+            if (!refreshToken) throw new Error('Refresh token tidak ditemukan')
 
-            processQueue(null, null)
+            const response = await instance.post(
+               '/api/auth/refresh-token',
+               null,
+               {
+                  headers: {
+                     Authorization: `Bearer ${refreshToken}`
+                  }
+               }
+            )
 
+            const newAccessToken = response.headers['access_token']
+            if (!newAccessToken)
+               throw new Error(
+                  'Access token baru tidak ditemukan di header response'
+               )
+
+            setAccessToken(newAccessToken)
+
+            processQueue(null, newAccessToken)
+
+            originalRequest.headers['Authorization'] =
+               `Bearer ${newAccessToken}`
             return instance(originalRequest)
          } catch (err) {
             processQueue(err, null)

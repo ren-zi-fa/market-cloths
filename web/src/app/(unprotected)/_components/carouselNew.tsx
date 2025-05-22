@@ -13,14 +13,10 @@ import { Iproduct } from '@/types'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
-import { useProfile } from '@/hooks/use-profile'
-import { useRouter } from 'next/navigation'
 import { useCart } from '@/hooks/use-cart'
 import { formatRupiah } from '@/lib/formatRupiah'
 
 export default function CarouselProductNew({ data }: { data: Iproduct[] }) {
-   const { user } = useProfile()
-   const router = useRouter()
    const { addToCart } = useCart()
    const handleCart = (
       item: Iproduct,
@@ -30,7 +26,7 @@ export default function CarouselProductNew({ data }: { data: Iproduct[] }) {
       addToCart(item)
    }
    return (
-      <div className="w-full px-4 py-6">
+      <div className="w-full px-4 py-6 mx-auto">
          <Carousel
             opts={{ align: 'start' }}
             className="w-full md:max-w-6xl mx-auto"

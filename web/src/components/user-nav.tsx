@@ -9,11 +9,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { User } from '@/types'
 import { UserRound } from 'lucide-react'
-import Link from 'next/link'
 import { Button } from './ui/button'
 import { useRouter } from 'next/navigation'
 
-type UserProps = Omit<User, 'tokenType'>
+type UserProps = Omit<User, 'tokenType' | 'iat' | 'exp'>
 interface UserNavProps {
    user?: UserProps | null
    loading: boolean
@@ -43,6 +42,7 @@ export default function UserNav({ user, loading, onLogout }: UserNavProps) {
                      <Button
                         onClick={() => router.push('/dashboard')}
                         className="w-full"
+                        variant="outline"
                      >
                         Dashboard
                      </Button>

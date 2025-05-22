@@ -21,14 +21,17 @@ import { useRouter } from 'next/navigation'
 import { useCart } from '@/hooks/use-cart'
 import UserNav from './user-nav'
 import CheckoutCart from '@/app/(unprotected)/_components/checkoutCart'
+import { useAuthStore } from '@/hooks/use-auth'
 
 export default function Navbar() {
    const { user, loading } = useProfile()
    const router = useRouter()
    const { cartCount } = useCart()
-
+   const { setAccessToken, setRefreshToken } = useAuthStore()
    const onLogout = async () => {
       await instance.post('/api/auth/logout')
+      setRefreshToken(null)
+      setAccessToken(null)
       router.replace('/auth/login')
    }
 
@@ -86,7 +89,13 @@ export default function Navbar() {
 
                {/* Desktop: UserNav */}
                <div className="hidden md:flex">
-                  <UserNav loading={loading} onLogout={onLogout} user={user} />
+              
+                     <UserNav
+                        loading={loading}
+                        onLogout={onLogout}
+                        user={user}
+                     />
+              
                </div>
 
                {/* Mobile: Logo */}
