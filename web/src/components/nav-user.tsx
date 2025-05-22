@@ -1,9 +1,6 @@
 'use client'
 
-import {
-   LogOutIcon,
-   MoreVerticalIcon,
-} from 'lucide-react'
+import { LogOutIcon, MoreVerticalIcon } from 'lucide-react'
 
 import { Avatar } from '@/components/ui/avatar'
 import {
@@ -22,7 +19,7 @@ import {
 } from '@/components/ui/sidebar'
 import { User } from '@/types'
 
-type UserProps = Omit<User, 'tokenType' | 'userId' | 'role'>
+type UserProps = Omit<User, 'tokenType' | 'userId' | 'role' | 'iat' | 'exp'>
 export function NavUser({ email, username }: UserProps) {
    const { isMobile } = useSidebar()
 

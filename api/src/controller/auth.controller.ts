@@ -110,6 +110,9 @@ const handleLogin = async (req: Request, res: Response) => {
 
       if (existingValidToken) {
          await deleteRefreshToken(userId, false)
+         console.log('Refresh token yang direvoke telah dihapus.')
+      } else {
+         console.log('Tidak ada refresh token yang direvoke.')
       }
 
       const refresh_token = crypto.randomBytes(32).toString('hex')
@@ -215,7 +218,7 @@ const handleProfile = async (req: Request, res: Response) => {
    try {
       // Ambil token dari header, misal: Authorization: Bearer <token>
       const authHeader = req.headers['authorization']
-
+      console.log(authHeader)
       const token =
          authHeader && authHeader.startsWith('Bearer ')
             ? authHeader.slice(7)

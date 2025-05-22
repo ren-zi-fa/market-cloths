@@ -111,6 +111,10 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const existingValidToken = yield (0, userService_1.checkRefreshToken)(userId);
         if (existingValidToken) {
             yield (0, userService_1.deleteRefreshToken)(userId, false);
+            console.log('Refresh token yang direvoke telah dihapus.');
+        }
+        else {
+            console.log('Tidak ada refresh token yang direvoke.');
         }
         const refresh_token = node_crypto_1.default.randomBytes(32).toString('hex');
         yield (0, userService_1.saveRefreshToken)(refresh_token, userId);
