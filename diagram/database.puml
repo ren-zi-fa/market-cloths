@@ -24,7 +24,7 @@ class Product {
   image_url: List<string>
   price: number
   stok: number
-  categoryId: string
+  categoryName: string
 }
 
 ' User Collection
@@ -46,24 +46,10 @@ class RefreshToken {
   userId: string
 }
 
-' Sales Collection
-class Sales {
-  + id: string
-  userId: string
-  items: List<{
-    productId: string
-    name: string
-    price: number
-    quantity: number
-  }>
-  totalAmount: number
-  createdAt: timestamp
-  paymentStatus: string <<paid | pending | failed>>
-}
+
 
 ' Relationships
 Product --> Category : categoryId
-Sales --> User : userId
 RefreshToken --> User : userId
 
 @enduml
