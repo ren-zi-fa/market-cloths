@@ -120,15 +120,15 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         yield (0, userService_1.saveRefreshToken)(refresh_token, userId);
         res.cookie('access_token', access_token, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
             maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE,
             path: '/'
         })
             .cookie('refresh_token', refresh_token, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
             maxAge: vars_1.default.REFRESH_TOKEN_MAX_AGE,
             path: '/'
         })
@@ -198,8 +198,8 @@ const handleRefreshToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
         }, JWT_SECRET, { expiresIn: '15m' });
         res.cookie('access_token', access_token, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
             maxAge: vars_1.default.ACCESS_TOKEN_MAX_AGE
         }).json({ success: true, message: 'Token diperbarui' });
     }

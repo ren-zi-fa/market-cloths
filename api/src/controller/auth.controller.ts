@@ -120,15 +120,15 @@ const handleLogin = async (req: Request, res: Response) => {
       await saveRefreshToken(refresh_token, userId)
       res.cookie('access_token', access_token, {
          httpOnly: true,
-         secure: true,
-         sameSite: 'none',
+         secure: false,
+         sameSite: 'lax',
          maxAge: vars.ACCESS_TOKEN_MAX_AGE,
          path: '/'
       })
          .cookie('refresh_token', refresh_token, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
             maxAge: vars.REFRESH_TOKEN_MAX_AGE,
             path: '/'
          })
@@ -199,8 +199,8 @@ const handleRefreshToken = async (req: Request, res: Response) => {
       )
       res.cookie('access_token', access_token, {
          httpOnly: true,
-         secure: true,
-         sameSite: 'none',
+         secure: false,
+         sameSite: 'lax',
          maxAge: vars.ACCESS_TOKEN_MAX_AGE
       }).json({ success: true, message: 'Token diperbarui' })
    } catch (error) {
