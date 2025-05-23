@@ -207,6 +207,7 @@ const handleProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         // Ambil token dari header, misal: Authorization: Bearer <token>
         const authHeader = req.headers['authorization'];
+        console.log(authHeader);
         const token = authHeader && authHeader.startsWith('Bearer ')
             ? authHeader.slice(7)
             : undefined;

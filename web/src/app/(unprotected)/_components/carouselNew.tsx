@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { useCart } from '@/hooks/use-cart'
 import { formatRupiah } from '@/lib/formatRupiah'
+import { useRouter } from 'next/navigation'
 
 export default function CarouselProductNew({ data }: { data: Iproduct[] }) {
    const { addToCart } = useCart()
@@ -25,6 +26,7 @@ export default function CarouselProductNew({ data }: { data: Iproduct[] }) {
       e.preventDefault()
       addToCart(item)
    }
+   const router = useRouter()
    return (
       <div className="w-full px-4 py-6 mx-auto">
          <Carousel
@@ -39,22 +41,26 @@ export default function CarouselProductNew({ data }: { data: Iproduct[] }) {
                   >
                      <div className="p-2 h-full">
                         <Card className="transition hover:shadow-lg flex flex-col justify-between h-full">
-                           <CardContent className="relative aspect-[4/5] py-2 px-4">
-                              <div className="relative w-full h-full">
-                                 <Image
-                                    src={item.image_url[0]}
-                                    alt={item.name}
-                                    width={300}
-                                    height={300}
-                                    className="w-full h-full object-cover rounded-md"
-                                 />
-                                 <div className="absolute inset-0 bg-black/10 rounded-md flex items-center justify-center px-2 text-center">
-                                    <p className="text-white text-base font-semibold drop-shadow">
-                                       {item.name}
-                                    </p>
+                           <button
+                              onClick={() => router.push(`/detail/${item.id}`)}
+                           >
+                              <CardContent className="relative aspect-[4/5] py-2 px-4">
+                                 <div className="relative w-full h-full">
+                                    <Image
+                                       src={item.image_url[0]}
+                                       alt={item.name}
+                                       width={300}
+                                       height={300}
+                                       className="w-full h-full object-cover rounded-md"
+                                    />
+                                    <div className="absolute inset-0 bg-black/10 rounded-md flex items-center justify-center px-2 text-center">
+                                       <p className="text-white text-base font-semibold drop-shadow">
+                                          {item.name}
+                                       </p>
+                                    </div>
                                  </div>
-                              </div>
-                           </CardContent>
+                              </CardContent>
+                           </button>
 
                            <div className="px-4 pt-1 pb-0 text-sm text-gray-600 line-clamp-2">
                               {item.description}

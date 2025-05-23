@@ -1,6 +1,5 @@
 'use client'
 
-import SearchInput from '@/components/Home/SearchInput'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
@@ -9,6 +8,7 @@ import HomeView from './_components'
 import { useEffect, useState } from 'react'
 import { Iproduct } from '@/types'
 import instance from '@/lib/axios'
+import SearchInput from './_components/searchInput'
 
 export default function Home() {
    const [newProduct, setProduct] = useState<Iproduct[] | null>(null)
