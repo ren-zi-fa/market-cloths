@@ -13,7 +13,7 @@ export const swaggerOptions = {
 
 This REST API is only accessible from the following origins:
 - http://localhost:3000
-- https://market-clozy.vercel.app/
+- http://localhost:5173
 - https://market-cloths.vercel.app/`
       },
       servers: [

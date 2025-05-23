@@ -80,7 +80,7 @@ export default function CarouselProductNew({ data }: { data: Iproduct[] }) {
                                  className="w-full  mt-1 md:mt-0"
                                  onClick={(e) => handleCart(item, e)}
                               >
-                                 <Plus className="mr-2 h-4 w-4" /> Add
+                                 <Plus className="mr-2 h-4 w-4" /> Add To Cart
                               </Button>
                            </CardFooter>
                         </Card>

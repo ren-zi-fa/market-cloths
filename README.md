@@ -1,31 +1,48 @@
-## MARKET CLOTHES
+## 🛍️ Market Clothes
 
-### Database Diagram
+### 🗂️ Database Diagram
 
-The following diagram illustrates the database structure used in this project.  
-You can view the full diagram [here](https://github.com/ren-zi-fa/market-cloths/blob/main/diagram/database.puml):
+Diagram berikut menggambarkan struktur database yang digunakan dalam proyek ini.  
+Lihat diagram lengkapnya di [database.puml](https://github.com/ren-zi-fa/market-cloths/blob/main/diagram/database.puml).
 
 ![Database Diagram](https://github.com/ren-zi-fa/market-cloths/blob/main/out/diagram/database/market_cloths.png)
 
-### Features
+---
 
-- Token-based authentication (Auth)
-- CRUD operations for Category
-- CRUD operations for Product
+### ✨ Fitur
 
-**_NOTE_**  
-ALL THE ROUTES EXCEPT AUTH DO NOT REQUIRE ACCESS TOKEN.  
-IF YOU ARE NOT LOGGED IN, YOU CAN STILL USE THEM LOCALLY.  
-THIS API IS NOT INTENDED FOR PRODUCTION USE.
+- ✅ Token-based authentication
+- 📁 CRUD kategori produk
+- 🛒 CRUD produk
+
+> ⚠️ **Catatan:**  
+> Semua endpoint **kecuali Auth** tidak memerlukan token akses.  
+> Anda tetap bisa mengaksesnya secara lokal tanpa login.  
+> API ini **tidak ditujukan untuk produksi**.
 
 ---
 
-### CORS Policy
+### 🌐 CORS Policy
 
-This REST API only allows requests from the following origins:
+REST API ini hanya menerima permintaan dari domain berikut:
 
 - `http://localhost:3000`
-- `https://market-clozy.vercel.app/`
+- `http://localhost:5173`
 - `https://market-cloths.vercel.app/`
 
-Make sure your frontend is served from one of these domains to access the API successfully.
+Pastikan frontend Anda berjalan dari salah satu domain tersebut agar dapat mengakses API dengan sukses.
+
+---
+
+### 🔌 Contoh Penggunaan
+
+Frontend dapat ditemukan di:  
+🔗 [cloth-ecommerce-xi.vercel.app](https://cloth-ecommerce-xi.vercel.app/)
+
+---
+
+### 🖼️ Demo Aplikasi
+
+| Tampilan 1 | Tampilan 2 |
+|------------|------------|
+| ![Screenshot 1](https://github.com/ren-zi-fa/market-cloths/blob/main/images/image1.png) | ![Screenshot 2](https://github.com/ren-zi-fa/market-cloths/blob/main/images/image2.png) |

@@ -23,7 +23,10 @@ export default function ProductDetailPage() {
    const productId = params.productId as string
    const [product, setProduct] = useState<Product | null>(null)
    const [loading, setLoading] = useState(true)
-   const { addToCart } = useCart()
+   const { addToCart, cart } = useCart()
+
+   // Cek apakah produk sudah ada di keranjang
+   const isInCart = cart?.some((item) => item.id === product?.id)
 
    useEffect(() => {
       if (!productId) return
@@ -37,7 +40,7 @@ export default function ProductDetailPage() {
 
    if (loading) {
       return (
-         <div className="flex justify-center items-center min-h-[300px]">
+         <div className="flex justify-center items-center min-h-screen">
             <span className="text-muted-foreground">Loading...</span>
          </div>
       )
@@ -45,66 +48,67 @@ export default function ProductDetailPage() {
 
    if (!product) {
       return (
-         <div className="flex justify-center items-center min-h-[300px]">
+         <div className="flex justify-center items-center min-h-screen">
             <span className="text-destructive">Produk tidak ditemukan.</span>
          </div>
       )
    }
 
    return (
-      <div className="h-screen">
-      <div className="container px-4 mx-auto py-8 flex items-center justify-center">
-         <Card className="w-full grid grid-cols-1 md:grid-cols-2 max-w-lg shadow-lg">
-            <CardHeader>
-               <div className="flex items-center gap-4">
-                  {product.image_url?.[0] && (
-                     <Image
-                        src={product.image_url[0]}
-                        alt={product.name}
-                        width={96}
-                        height={96}
-                        className="rounded-lg object-cover border"
-                        style={{ background: '#f4f4f5' }}
-                        priority
-                     />
-                  )}
-                  <div>
-                     <CardTitle className="text-2xl">{product.name}</CardTitle>
-                     <Badge variant="outline" className="capitalize mt-2">
-                        {product.category_name}
-                     </Badge>
+      <div className="flex justify-center items-center min-h-screen px-4">
+         <Card className="w-full max-w-4xl grid md:grid-cols-2 gap-6 p-6 shadow-xl">
+            {product.image_url?.[0] && (
+               <div className="flex items-center justify-center">
+                  <Image
+                     src={product.image_url[0]}
+                     alt={product.name}
+                     width={400}
+                     height={300}
+                     className="rounded-lg object-cover border"
+                     style={{ background: '#f4f4f5' }}
+                     priority
+                  />
+               </div>
+            )}
+
+            <div className="flex flex-col justify-between">
+               <CardHeader>
+                  <CardTitle className="text-3xl">{product.name}</CardTitle>
+                  <Badge variant="outline" className="capitalize mt-2">
+                     {product.category_name}
+                  </Badge>
+               </CardHeader>
+               <CardContent className="flex flex-col gap-4">
+                  <div className="text-xl font-semibold text-primary">
+                     Rp {product.price.toLocaleString('id-ID')}
                   </div>
-               </div>
-            </CardHeader>
-            <CardContent>
-               <div className="text-lg font-semibold text-primary mb-2">
-                  Rp {product.price.toLocaleString('id-ID')}
-               </div>
-               <CardDescription className="mb-4">
-                  {product.description}
-               </CardDescription>
-               <div className="flex items-center gap-2 text-sm mb-4">
-                  <span className="font-medium">Stok:</span>
-                  <span
-                     className={
-                        product.stok > 0
-                           ? 'text-green-600 font-semibold'
-                           : 'text-destructive font-semibold'
-                     }
+                  <CardDescription>{product.description}</CardDescription>
+                  <div className="flex items-center gap-2 text-sm">
+                     <span className="font-medium">Stok:</span>
+                     <span
+                        className={
+                           product.stok > 0
+                              ? 'text-green-600 font-semibold'
+                              : 'text-destructive font-semibold'
+                        }
+                     >
+                        {product.stok > 0 ? product.stok : 'Habis'}
+                     </span>
+                  </div>
+                  <Button
+                     className="w-full"
+                     disabled={product.stok <= 0 || isInCart}
+                     onClick={() => addToCart(product)}
                   >
-                     {product.stok > 0 ? product.stok : 'Habis'}
-                  </span>
-               </div>
-               <Button
-                  className="w-full"
-                  disabled={product.stok <= 0}
-                  onClick={() => addToCart(product)}
-               >
-                  {product.stok > 0 ? 'Tambah ke Keranjang' : 'Stok Habis'}
-               </Button>
-            </CardContent>
+                     {product.stok <= 0
+                        ? 'Stok Habis'
+                        : isInCart
+                        ? 'has been added to cart'
+                        : 'Add To Cart'}
+                  </Button>
+               </CardContent>
+            </div>
          </Card>
-      </div>
       </div>
    )
 }

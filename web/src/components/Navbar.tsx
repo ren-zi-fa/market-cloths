@@ -8,7 +8,6 @@ import {
    SheetTrigger,
    SheetHeader,
    SheetTitle,
-   SheetDescription,
    SheetClose
 } from '@/components/ui/sheet'
 import Link from 'next/link'
@@ -51,15 +50,14 @@ export default function Navbar() {
                   </SheetTrigger>
                   <SheetContent side="right" className="py-10">
                      <SheetHeader>
-                        <SheetTitle>Menu</SheetTitle>
-                        <SheetDescription>Navigasi utama</SheetDescription>
+                        <SheetTitle>Market Cloths</SheetTitle>
                      </SheetHeader>
-                     <div className="flex flex-col gap-6 mt-8">
+                     <div className="flex flex-col ms-10 gap-6 mt-8">
                         {Nav_Links.map((items, i) => (
                            <SheetClose asChild key={i}>
                               <Link
                                  href={items.path}
-                                 className="hover:text-black font-medium text-xl text-purple-600"
+                                 className=""
                               >
                                  {items.title}
                               </Link>
@@ -89,13 +87,13 @@ export default function Navbar() {
 
                {/* Desktop: UserNav */}
                <div className="hidden md:flex">
-              
+                  {user && (
                      <UserNav
                         loading={loading}
                         onLogout={onLogout}
                         user={user}
                      />
-              
+                  )}
                </div>
 
                {/* Mobile: Logo */}

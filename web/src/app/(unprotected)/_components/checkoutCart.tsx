@@ -11,11 +11,11 @@ import {
    DrawerTrigger
 } from '@/components/ui/drawer'
 import { useCart } from '@/hooks/use-cart'
-import { useProfile } from '@/hooks/use-profile'
 import { formatRupiah } from '@/lib/formatRupiah'
 import { Iproduct } from '@/types'
 import { ShoppingBag } from 'lucide-react'
 import Image from 'next/image'
+import { useEffect } from 'react'
 
 interface CheckoutCartProps {
    cartCount: number
@@ -23,7 +23,6 @@ interface CheckoutCartProps {
 
 export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
    const { cart: carts, setCart, removeFromCart } = useCart()
-   const { user, loading } = useProfile()
 
    const decreaseQuantity = (productId: string) => {
       const index = carts.findIndex((item) => item.id === productId)
@@ -47,6 +46,43 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
          }
       }
    }
+   const handlePay = async () => {
+      const res = await fetch('/api/midtrans-token', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({
+            amount: totalPrice,
+            name: 'Pembeli',
+            email: 'pembeli@email.com'
+         })
+      })
+
+      const data = await res.json()
+
+      if (data?.token) {
+         // @ts-expect-error snap tidak terdefinisi di typings, tapi tersedia setelah script dimuat
+         window.snap.pay(data.token, {
+            onSuccess: (result: any) => {
+               console.log('Pembayaran sukses', result)
+               alert('Pembayaran berhasil!')
+               setCart([])
+            },
+            onPending: (result: any) => {
+               console.log('Menunggu pembayaran', result)
+               alert('Menunggu pembayaran...')
+            },
+            onError: (result: any) => {
+               console.error('Terjadi kesalahan', result)
+               alert('Terjadi kesalahan saat pembayaran')
+            },
+            onClose: () => {
+               console.log('Popup ditutup tanpa pembayaran')
+            }
+         })
+      } else {
+         alert('Gagal membuat token pembayaran')
+      }
+   }
 
    const cartMap = new Map<string, { product: Iproduct; qty: number }>()
    carts.forEach((item) => {
@@ -62,6 +98,19 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
       (total, { product, qty }) => total + product.price * qty,
       0
    )
+
+   useEffect(() => {
+      const script = document.createElement('script')
+      script.src = 'https://app.sandbox.midtrans.com/snap/snap.js'
+      script.setAttribute(
+         'data-client-key',
+         process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY!
+      )
+      document.body.appendChild(script)
+      return () => {
+         document.body.removeChild(script)
+      }
+   }, [])
 
    return (
       <Drawer>
@@ -103,7 +152,9 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
                               className="w-16 h-16 object-cover rounded"
                            />
                            <div className="flex-1">
-                              <h3 className="text-sm font-medium">{product.name}</h3>
+                              <h3 className="text-sm font-medium">
+                                 {product.name}
+                              </h3>
                               <p className="text-sm text-gray-600">
                                  {formatRupiah(product.price)}
                               </p>
@@ -136,28 +187,19 @@ export default function CheckoutCart({ cartCount }: CheckoutCartProps) {
 
                {/* Info user & total */}
                <div className="col-span-2 flex flex-col gap-4 text-sm md:text-lg font-semibold">
-                  {loading ? (
-                     <p>Loading...</p>
-                  ) : (
-                     <>
-                        <div className="break-words">
-                           <span>Nama: </span>
-                           <span className="break-all">{user?.username}</span>
-                        </div>
-                        <div className="break-words">
-                           <span>Email: </span>
-                           <span className="break-all">{user?.email}</span>
-                        </div>
-                     </>
-                  )}
                   <div className="flex justify-between">
                      <span>Total:</span>
                      <span>{formatRupiah(totalPrice)}</span>
                   </div>
                   <div className="flex gap-2 mt-2">
-                     <Button className="flex-1" disabled={groupedCarts.length === 0}>
+                     <Button
+                        className="flex-1"
+                        disabled={groupedCarts.length === 0}
+                        onClick={handlePay}
+                     >
                         Bayar
                      </Button>
+
                      <DrawerClose asChild>
                         <Button className="flex-1" variant="outline">
                            Cancel

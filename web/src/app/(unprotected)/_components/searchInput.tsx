@@ -6,6 +6,7 @@ import debounce from 'lodash.debounce'
 import instance from '@/lib/axios'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 type Product = {
    id: string
@@ -76,8 +77,11 @@ export default function SearchInput() {
 
    return (
       <div className="container max-w-md space-y-2">
-         <h1 className="text-lg font-bold">CASUAL</h1>
-         <h1 className="text-lg font-bold">FORMAL</h1>
+         <div className="flex-col flex ms-4">
+            <Link href={`/category/casual`} className='hover:underline'>CASUAL</Link>
+            <Link href={`/category/formal`}  className='hover:underline'>FORMAL</Link>
+         </div>
+
          <div className="relative">
             <AsyncSelect
                cacheOptions

@@ -1,7 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
+
 import Image from 'next/image'
 import SectionBottom from './_components/section-bottom'
 import HomeView from './_components'
@@ -32,9 +31,7 @@ export default function Home() {
                   summer <br />
                   2024
                </p>
-               <Button className="flex w-max items-center gap-2">
-                  Go to Shop <ArrowRight />
-               </Button>
+            
             </div>
             {/* Images Section */}
             <div className="flex flex-col md:flex-row order-1 md:order-2 gap-4 justify-center items-center z-0">
